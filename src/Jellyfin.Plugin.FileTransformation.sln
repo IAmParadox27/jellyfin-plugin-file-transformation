@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Plugin.FileTransformation", "Jellyfin.Plugin.FileTransformation\Jellyfin.Plugin.FileTransformation.csproj", "{EA064313-1417-4D25-9FB1-78AD0F9C094C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA064313-1417-4D25-9FB1-78AD0F9C094C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA064313-1417-4D25-9FB1-78AD0F9C094C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA064313-1417-4D25-9FB1-78AD0F9C094C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA064313-1417-4D25-9FB1-78AD0F9C094C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Jellyfin.Controller" Version="10.10.3" />
+      <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
+      <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
+      <PackageReference Include="Jellyfin.Model" Version="10.10.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="0Harmony">
+          <HintPath>libs\Harmony\0Harmony.dll</HintPath>
+<!--          <Private>False</Private>-->
+      </Reference>
+      <Reference Include="Emby.Server.Implementations">
+        <HintPath>C:\Program Files\Jellyfin\Server\Emby.Server.Implementations.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+      <Reference Include="jellyfin">
+          <HintPath>libs\Jellyfin\jellyfin.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+      <Reference Include="Jellyfin.Api">
+          <HintPath>C:\Program Files\Jellyfin\Server\Jellyfin.Api.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+      <Reference Include="Prometheus.AspNetCore">
+          <HintPath>C:\Program Files\Jellyfin\Server\Prometheus.AspNetCore.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+      <Reference Include="Prometheus.NetStandard">
+          <HintPath>C:\Program Files\Jellyfin\Server\Prometheus.NetStandard.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="libs\Harmony\0Harmony.dll" />
+      <EmbeddedResource Include="libs\Harmony\0Harmony.dll" />
+      <None Remove="libs\Harmony\Mono.Cecil.dll" />
+      <EmbeddedResource Include="libs\Harmony\Mono.Cecil.dll" />
+      <None Remove="libs\Harmony\MonoMod.Common.dll" />
+      <EmbeddedResource Include="libs\Harmony\MonoMod.Common.dll" />
+      <None Remove="libs\Harmony\MonoMod.Utils.dll" />
+      <EmbeddedResource Include="libs\Harmony\MonoMod.Utils.dll" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="xcopy $(OutDir) &quot;C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0&quot; /y" />
+    </Target>
+
+</Project>
