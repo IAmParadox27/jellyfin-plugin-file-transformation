@@ -1,4 +1,5 @@
-﻿using Jellyfin.Plugin.FileTransformation.Controller;
+﻿using System.Text.RegularExpressions;
+using Jellyfin.Plugin.FileTransformation.Controller;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 {
@@ -21,7 +22,17 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
         /// <inheritdoc />
         public bool NeedsTransformation(string path)
         {
-            return m_fileTransformations.ContainsKey(NormalizePath(path));
+            if (m_fileTransformations.ContainsKey(NormalizePath(path)))
+            {
+                return true;
+            }
+
+            return m_fileTransformations.Keys.Any(x =>
+            {
+                Regex r = new Regex(x);
+
+                return r.IsMatch(path);
+            });
         }
 
         /// <inheritdoc />
@@ -33,11 +44,35 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             }
 
             path = NormalizePath(path);
-            ICollection<TransformFile> pipeline = m_fileTransformations[path];
-            foreach (TransformFile action in pipeline)
+
+            ICollection<TransformFile>? pipeline = null;
+
+            if (m_fileTransformations.ContainsKey(path))
             {
-                stream.Seek(0, SeekOrigin.Begin);
-                action(path, stream);
+                pipeline = m_fileTransformations[path];
+            }
+            else
+            {
+                string? key = m_fileTransformations.Keys.FirstOrDefault(x =>
+                {
+                    Regex r = new Regex(x);
+                    
+                    return r.IsMatch(path);
+                });
+
+                if (key != null)
+                {
+                    pipeline = m_fileTransformations[key];
+                }
+            }
+
+            if (pipeline != null)
+            {
+                foreach (TransformFile action in pipeline)
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    action(path, stream);
+                }
             }
         }
 
