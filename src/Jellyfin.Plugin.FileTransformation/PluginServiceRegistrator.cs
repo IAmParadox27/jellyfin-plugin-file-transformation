@@ -6,6 +6,7 @@ using HarmonyLib;
 using Jellyfin.Api.Middleware;
 using Jellyfin.Plugin.FileTransformation.Controller;
 using Jellyfin.Plugin.FileTransformation.Infrastructure;
+using Jellyfin.Plugin.Referenceable.Services;
 using Jellyfin.Server;
 using Jellyfin.Server.Extensions;
 using MediaBrowser.Common.Net;
@@ -24,51 +25,13 @@ using Prometheus;
 
 namespace Jellyfin.Plugin.FileTransformation
 {
-    public class PluginServiceRegistrator : IPluginServiceRegistrator
+    public class FileTransformPluginServiceRegistrator : PluginServiceRegistrator
     {
-        public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
+        public override void ConfigureServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
-            PluginLoadContext? context = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly()) as PluginLoadContext;
-            
-            if (context != null)
-            {
-                FileTransformationAssemblyLoadContext newContext =
-                    new FileTransformationAssemblyLoadContext(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
-                Assembly newAssembly = newContext.LoadFromAssemblyPath(Assembly.GetExecutingAssembly().Location);
-                Type type = newAssembly.GetType(typeof(PluginServiceRegistrator).FullName);
-                object newRegistrator = Activator.CreateInstance(type);
-                MethodInfo registerServicesMethod = type.GetMethod(nameof(RegisterServices))!;
-                registerServicesMethod.Invoke(newRegistrator, new object?[]
-                {
-                    serviceCollection,
-                    applicationHost
-                });
-
-                return;
-            }
-            
             Harmony harmony = new Harmony("dev.iamparadox.jellyfin")!;
             
-            // StackTrace trace = new StackTrace();
-            // foreach (StackFrame frame in trace.GetFrames())
-            // {
-            //     if (frame.GetMethod()?.DeclaringType?.FullName?.EndsWith("HostBuilder.InitializeServiceProvider") ?? false)
-            //     {
-            //         s_harmony.Patch(frame.GetMethod(), postfix: new HarmonyMethod(typeof(ModuleInitializer).GetMethod(nameof(StartupPatch))));
-            //     }
-            // }
-
-            if (Harmony.GetAllPatchedMethods().Any(x => x.DeclaringType == typeof(Startup) && x.Name == nameof(Startup.Configure)))
-            {
-                // Its already patched and the service is already made
-                return;
-            }
-            //
-            // AssemblyLoadContext? loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
-            // typeof(AssemblyLoadContext).GetField("_isCollectible", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(loadContext, false);
-            //
-            HarmonyMethod configureStartupPatchMethod = new HarmonyMethod(typeof(PluginServiceRegistrator).GetMethod(nameof(Configure_StartupPatch)))!;
+            HarmonyMethod configureStartupPatchMethod = new HarmonyMethod(typeof(FileTransformPluginServiceRegistrator).GetMethod(nameof(Configure_StartupPatch)))!;
             
             harmony.Patch(typeof(Startup).GetMethod(nameof(Startup.Configure)),
                 prefix: configureStartupPatchMethod);

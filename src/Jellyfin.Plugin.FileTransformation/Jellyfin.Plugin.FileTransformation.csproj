@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,12 +12,17 @@
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Model" Version="10.10.3" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.1" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <EnableRepack>false</EnableRepack>
+    </PropertyGroup>
+    
     <ItemGroup>
       <Reference Include="0Harmony">
           <HintPath>libs\Harmony\0Harmony.dll</HintPath>
-<!--          <Private>False</Private>-->
+          <Private>False</Private>
       </Reference>
       <Reference Include="Emby.Server.Implementations">
         <HintPath>C:\Program Files\Jellyfin\Server\Emby.Server.Implementations.dll</HintPath>
@@ -44,11 +50,8 @@
       <None Remove="libs\Harmony\0Harmony.dll" />
       <EmbeddedResource Include="libs\Harmony\0Harmony.dll" />
       <None Remove="libs\Harmony\Mono.Cecil.dll" />
-      <EmbeddedResource Include="libs\Harmony\Mono.Cecil.dll" />
       <None Remove="libs\Harmony\MonoMod.Common.dll" />
-      <EmbeddedResource Include="libs\Harmony\MonoMod.Common.dll" />
       <None Remove="libs\Harmony\MonoMod.Utils.dll" />
-      <EmbeddedResource Include="libs\Harmony\MonoMod.Utils.dll" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
