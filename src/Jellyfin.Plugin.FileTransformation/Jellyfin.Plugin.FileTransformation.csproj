@@ -8,11 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Jellyfin.Controller" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Model" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.1" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.2" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <PropertyGroup>
