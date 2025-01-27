@@ -4,6 +4,14 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RepositoryUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</RepositoryUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <Description>Jellyfin plugin to allow other plugin developers to intercept and change the delivered web content of jellyfin-web without requiring custom jellyfin-web builds or injected javascript.
+
+This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
+        <PackageProjectUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</PackageProjectUrl>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/refs/heads/main/LICENSE</PackageLicenseUrl>
         
     </PropertyGroup>
 
