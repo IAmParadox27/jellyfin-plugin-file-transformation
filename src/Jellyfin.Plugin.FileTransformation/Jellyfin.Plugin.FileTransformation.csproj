@@ -10,34 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.4" OutputItemType="Analyzer" ReferenceOutputAssembly="false" GeneratePathProperty="true" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="0Harmony">
-          <HintPath>libs\Harmony\0Harmony.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
-      <Reference Include="Emby.Server.Implementations">
-        <HintPath>C:\Program Files\Jellyfin\Server\Emby.Server.Implementations.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
-      <Reference Include="jellyfin">
-          <HintPath>libs\Jellyfin\jellyfin.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
-      <Reference Include="Jellyfin.Api">
-          <HintPath>C:\Program Files\Jellyfin\Server\Jellyfin.Api.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
-      <Reference Include="Prometheus.AspNetCore">
-          <HintPath>C:\Program Files\Jellyfin\Server\Prometheus.AspNetCore.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
-      <Reference Include="Prometheus.NetStandard">
-          <HintPath>C:\Program Files\Jellyfin\Server\Prometheus.NetStandard.dll</HintPath>
-          <Private>False</Private>
-      </Reference>
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.5" OutputItemType="Analyzer" ReferenceOutputAssembly="false" GeneratePathProperty="true" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="Build">

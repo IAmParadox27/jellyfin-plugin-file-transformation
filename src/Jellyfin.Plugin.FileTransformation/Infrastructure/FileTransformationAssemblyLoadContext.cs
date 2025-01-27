@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
-using Emby.Server.Implementations.Plugins;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 {
@@ -9,7 +8,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
         private readonly AssemblyDependencyResolver m_resolver;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PluginLoadContext"/> class.
+        /// Initializes a new instance of the <see cref="FileTransformationAssemblyLoadContext"/> class.
         /// </summary>
         /// <param name="path">The path of the plugin assembly.</param>
         public FileTransformationAssemblyLoadContext(string path) : base(false)
