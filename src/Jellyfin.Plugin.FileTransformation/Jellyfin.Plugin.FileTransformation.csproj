@@ -10,13 +10,9 @@
     <ItemGroup>
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.2" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.4" OutputItemType="Analyzer" ReferenceOutputAssembly="false" GeneratePathProperty="true" />
     </ItemGroup>
 
-    <PropertyGroup>
-        <EnableRepack>false</EnableRepack>
-    </PropertyGroup>
-    
     <ItemGroup>
       <Reference Include="0Harmony">
           <HintPath>libs\Harmony\0Harmony.dll</HintPath>
@@ -44,16 +40,8 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="libs\Harmony\0Harmony.dll" />
-      <EmbeddedResource Include="libs\Harmony\0Harmony.dll" />
-      <None Remove="libs\Harmony\Mono.Cecil.dll" />
-      <None Remove="libs\Harmony\MonoMod.Common.dll" />
-      <None Remove="libs\Harmony\MonoMod.Utils.dll" />
-    </ItemGroup>
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="xcopy $(OutDir) &quot;C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0&quot; /y" />
+    <Target Name="PostBuild" AfterTargets="Build">
+      <Exec Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0&quot; /y" />
     </Target>
 
 </Project>
