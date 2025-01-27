@@ -32,40 +32,15 @@ namespace Jellyfin.Plugin.FileTransformation
             Harmony harmony = new Harmony("dev.iamparadox.jellyfin")!;
             
             HarmonyMethod configureStartupPatchMethod = new HarmonyMethod(typeof(FileTransformPluginServiceRegistrator).GetMethod(nameof(Configure_StartupPatch)));
-            HarmonyMethod createPluginInstanceMethod = new HarmonyMethod(typeof(FileTransformPluginServiceRegistrator).GetMethod(nameof(CreatePluginInstance_PluginManagerPatch)));
             
             harmony.Patch(typeof(Startup).GetMethod(nameof(Startup.Configure)),
                 prefix: configureStartupPatchMethod);
-            
-            harmony.Patch(typeof(PluginManager).GetMethod("CreatePluginInstance", BindingFlags.NonPublic | BindingFlags.Instance),
-                prefix: createPluginInstanceMethod);
             
             serviceCollection.AddSingleton<WebFileTransformationService>()
                 .AddSingleton<IWebFileTransformationReadService>(s => s.GetRequiredService<WebFileTransformationService>())
                 .AddSingleton<IWebFileTransformationWriteService>(s => s.GetRequiredService<WebFileTransformationService>());
         }
 
-        public static void CreatePluginInstance_PluginManagerPatch(ref Type type)
-        {
-            string pluginAssemblyFullName = type.Assembly.FullName;
-            IEnumerable<Assembly> assembliesContainingType = AssemblyLoadContext.All
-                .SelectMany(x => x.Assemblies)
-                .Where(x => x.FullName == pluginAssemblyFullName);
-
-            if (assembliesContainingType.Any(x => !x.IsCollectible))
-            {
-                Assembly assemblyToUse = assembliesContainingType.First(x => !x.IsCollectible);
-                
-                string typeFullName = type.FullName;
-                Type? replacementType = assemblyToUse.GetTypes().FirstOrDefault(x => x.FullName == typeFullName);
-
-                if (replacementType != null)
-                {
-                    type = replacementType;
-                }
-            }
-        }
-        
         public static bool Configure_StartupPatch(IApplicationBuilder app,
             IWebHostEnvironment env,
             IConfiguration appConfig,
