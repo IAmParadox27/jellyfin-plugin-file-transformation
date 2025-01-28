@@ -1,7 +1,7 @@
 ﻿using Jellyfin.Plugin.FileTransformation.Controller;
 using Jellyfin.Plugin.FileTransformation.Infrastructure;
+using Jellyfin.Plugin.FileTransformation.Services;
 using Jellyfin.Plugin.Referenceable.Helpers;
-using Jellyfin.Plugin.Referenceable.Services;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using Microsoft.AspNetCore.Builder;

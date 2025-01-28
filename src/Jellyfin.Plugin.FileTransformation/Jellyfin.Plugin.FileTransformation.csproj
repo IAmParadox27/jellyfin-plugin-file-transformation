@@ -13,12 +13,13 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
         <PackageProjectUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</PackageProjectUrl>
         <PackageLicenseUrl>https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/refs/heads/main/LICENSE</PackageLicenseUrl>
         
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.4" OutputItemType="Analyzer" GeneratePathProperty="true" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.5" OutputItemType="Analyzer" GeneratePathProperty="true" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="Build">
