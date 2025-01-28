@@ -18,7 +18,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
     <ItemGroup>
       <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.1-alpha.5" OutputItemType="Analyzer" ReferenceOutputAssembly="false" GeneratePathProperty="true" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.0.4" OutputItemType="Analyzer" GeneratePathProperty="true" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="Build">
