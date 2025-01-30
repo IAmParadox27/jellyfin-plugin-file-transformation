@@ -24,7 +24,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
       <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.1.0" OutputItemType="Analyzer" GeneratePathProperty="true" />
     </ItemGroup>
 
-    <Target Name="PostBuild" AfterTargets="Build">
+    <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0')">
       <Exec Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0&quot; /y" />
     </Target>
 
