@@ -15,8 +15,8 @@
 	<a href="https://www.nuget.org/packages/Jellyfin.Plugin.FileTransformation">
 		<img alt="NuGet Release" src="https://img.shields.io/nuget/v/Jellyfin.Plugin.FileTransformation" />
 	</a>
-  <a href="https://www.nuget.org/packages/Jellyfin.Plugin.Referenceable/1.0.6">
-    <img alt="Shield Example" src="https://img.shields.io/badge/JF%20Referenceable-v1.0.6-blue" /> 
+  <a href="https://www.nuget.org/packages/Jellyfin.Plugin.Referenceable/1.1.0">
+    <img alt="Shield Example" src="https://img.shields.io/badge/JF%20Referenceable-v1.1.0-blue" /> 
   </a>
 </p>
 
