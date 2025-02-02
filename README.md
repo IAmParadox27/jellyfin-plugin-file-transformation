@@ -15,15 +15,15 @@
 	<a href="https://www.nuget.org/packages/Jellyfin.Plugin.FileTransformation">
 		<img alt="NuGet Release" src="https://img.shields.io/nuget/v/Jellyfin.Plugin.FileTransformation" />
 	</a>
-  <a href="https://www.nuget.org/packages/Jellyfin.Plugin.Referenceable/1.2.0">
-    <img alt="Shield Example" src="https://img.shields.io/badge/JF%20Referenceable-v1.2.0-blue" /> 
+  <a href="https://www.nuget.org/packages/Jellyfin.Plugin.Referenceable/1.2.1">
+    <img alt="Shield Example" src="https://img.shields.io/badge/JF%20Referenceable-v1.2.1-blue" /> 
   </a>
 </p>
 
 ## Introduction
 File Transformation is a [Referenceable](https://github.com/IAmParadox27/jellyfin-plugin-referenceable) Jellyfin Plugin (and C# Library) that can be used to modify the served [jellyfin-web](https://github.com/jellyfin/jellyfin-web) content without having to modify the files directly.
 
-> :warning: This plugin makes use of [Jellyfin Referenceable](https://github.com/IAmParadox27/jellyfin-plugin-referenceable) using version `1.2.0`. Ensure all plugins that use this plugin are compatible with that version.
+> :warning: This plugin makes use of [Jellyfin Referenceable](https://github.com/IAmParadox27/jellyfin-plugin-referenceable) using version `1.2.1`. Ensure all plugins that use this plugin are compatible with that version.
 
 The use cases for this can be seen in my other plugins [plugin-pages](https://github.com/IAmParadox27/jellyfin-plugin-pages) and [home-sections](https://github.com/IAmParadox27/jellyfin-plugin-home-sections) which both take advantage of this.
 
@@ -43,15 +43,15 @@ Well, this plugin is non destructive and allows multiple plugins to manipulate t
 
 ### Prerequisites
 | Plugin Version | Jellyfin Version |
-| - | - |
-| 1.1.0 | 10.10.3 |
-| 1.2.0 | 10.10.5 |
+|----------------|------------------|
+| 1.1.0          | 10.10.3          |
+| 1.2.*          | 10.10.5          |
 
 ### Referencing this as a library
 Add `Jellyfin.Plugin.FileTransformation` from NuGet using the most appropriate version from the table above. All versions previous to 1.1.0 do not work correctly and have issues which were only discovered after making the release.
 
 ```xml
-<PackageReference Include="Jellyfin.Plugin.FileTransformation" Version="1.2.0" />
+<PackageReference Include="Jellyfin.Plugin.FileTransformation" Version="1.2.1" />
 ```
 
 ## Requests
