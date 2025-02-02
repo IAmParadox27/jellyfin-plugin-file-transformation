@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RepositoryUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
         <Description>Jellyfin plugin to allow other plugin developers to intercept and change the delivered web content of jellyfin-web without requiring custom jellyfin-web builds or injected javascript.
@@ -13,15 +14,15 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
         <PackageProjectUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</PackageProjectUrl>
         <PackageLicenseUrl>https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/refs/heads/main/LICENSE</PackageLicenseUrl>
         
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Jellyfin.Model" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Controller" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Data" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Extensions" Version="10.10.3" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.1.0" OutputItemType="Analyzer" GeneratePathProperty="true" />
+      <PackageReference Include="Jellyfin.Model" Version="10.10.5" />
+      <PackageReference Include="Jellyfin.Controller" Version="10.10.5" />
+      <PackageReference Include="Jellyfin.Data" Version="10.10.5" />
+      <PackageReference Include="Jellyfin.Extensions" Version="10.10.5" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.2.0" OutputItemType="Analyzer" GeneratePathProperty="true" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0')">
