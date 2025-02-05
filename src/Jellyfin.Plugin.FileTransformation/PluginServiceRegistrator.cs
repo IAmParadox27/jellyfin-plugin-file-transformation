@@ -22,6 +22,12 @@ namespace Jellyfin.Plugin.FileTransformation
                 .AddSingleton<IWebFileTransformationWriteService>(s => s.GetRequiredService<WebFileTransformationService>());
         }
 
+        ~FileTransformPluginServiceRegistrator()
+        {
+            StartupHelper.WebDefaultFilesFileProvider = null;
+            StartupHelper.WebStaticFilesFileProvider = null;
+        }
+        
         private IFileProvider GetFileTransformationFileProvider(IServerConfigurationManager serverConfigurationManager, IApplicationBuilder mainApplicationBuilder)
         {
             return new PhysicalTransformedFileProvider(
