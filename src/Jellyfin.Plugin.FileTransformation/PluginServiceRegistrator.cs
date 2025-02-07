@@ -1,4 +1,5 @@
-﻿using Jellyfin.Plugin.FileTransformation.Controller;
+﻿using System.Reflection;
+using Jellyfin.Plugin.FileTransformation.Controller;
 using Jellyfin.Plugin.FileTransformation.Infrastructure;
 using Jellyfin.Plugin.FileTransformation.Services;
 using Jellyfin.Plugin.Referenceable.Helpers;
@@ -24,6 +25,12 @@ namespace Jellyfin.Plugin.FileTransformation
 
         ~FileTransformPluginServiceRegistrator()
         {
+            if (Assembly.GetExecutingAssembly().IsCollectible)
+            {
+                // We don't care about the collectible version being destroyed
+                return;
+            }
+            
             StartupHelper.WebDefaultFilesFileProvider = null;
             StartupHelper.WebStaticFilesFileProvider = null;
         }
