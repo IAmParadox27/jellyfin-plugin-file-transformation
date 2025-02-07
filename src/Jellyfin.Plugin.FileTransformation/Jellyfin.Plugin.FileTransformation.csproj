@@ -15,7 +15,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
         <PackageLicenseUrl>https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/refs/heads/main/LICENSE</PackageLicenseUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         
-        <Version>1.2.1</Version>
+        <Version>1.2.2</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,7 +23,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
       <PackageReference Include="Jellyfin.Controller" Version="10.10.5" />
       <PackageReference Include="Jellyfin.Data" Version="10.10.5" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.5" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.2.1" OutputItemType="Analyzer" GeneratePathProperty="true" />
+      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.2.2" OutputItemType="Analyzer" GeneratePathProperty="true" />
     </ItemGroup>
 
     <ItemGroup>
