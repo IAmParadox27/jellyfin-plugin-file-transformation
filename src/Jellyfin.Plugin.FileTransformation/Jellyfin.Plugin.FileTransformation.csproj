@@ -4,34 +4,41 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RepositoryUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
         <Description>Jellyfin plugin to allow other plugin developers to intercept and change the delivered web content of jellyfin-web without requiring custom jellyfin-web builds or injected javascript.
 
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
-        <PackageProjectUrl>https://github.com/IAmParadox27/jellyfin-plugin-file-transformation</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/refs/heads/main/LICENSE</PackageLicenseUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
         
-        <Version>1.2.2</Version>
+        <Version>2.0.0 </Version>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        
       <PackageReference Include="Jellyfin.Model" Version="10.10.5" />
       <PackageReference Include="Jellyfin.Controller" Version="10.10.5" />
       <PackageReference Include="Jellyfin.Data" Version="10.10.5" />
       <PackageReference Include="Jellyfin.Extensions" Version="10.10.5" />
-      <PackageReference Include="Jellyfin.Plugin.Referenceable" Version="1.2.2" OutputItemType="Analyzer" GeneratePathProperty="true" />
+
+      <PackageReference Include="Lib.Harmony.Fork" Version="2.3.3" GeneratePathProperty="true" />
+
+      <PackageReference Include="prometheus-net" Version="8.2.1" />
+      <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+      <PackageReference Include="prometheus-net.DotNetRuntime" Version="4.4.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\README.md" Pack="true" PackagePath="/" />
+      <EmbeddedResource Include="$(PkgLib_Harmony_Fork)\lib\net8.0\0Harmony.dll" />
     </ItemGroup>
     
-    <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0')">
-      <Exec Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\File Transformation_1.0.0.0&quot; /y" />
+    <ItemGroup>
+        <None Include="..\..\README.md" />
+    </ItemGroup>
+    
+    <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\FileTransformation')">
+      <Exec Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\FileTransformation&quot; /y" />
     </Target>
 
 </Project>

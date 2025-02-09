@@ -1,23 +1,15 @@
-﻿using Jellyfin.Plugin.FileTransformation.Controller;
+﻿using Jellyfin.Plugin.FileTransformation.Library;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Primitives;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 {
-    /// <summary>
-    /// Provides file contents modified by <see cref="IWebFileTransformationReadService"/>.
-    /// </summary>
     public class PhysicalTransformedFileProvider : IFileProvider
     {
         private readonly PhysicalFileProvider m_parentProvider;
         private readonly IWebFileTransformationReadService m_webFileTransformationService;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PhysicalTransformedFileProvider"/> class based on the set parent provider.
-        /// </summary>
-        /// <param name="parentProvider">The parent provider.</param>
-        /// <param name="webFileTransformationService">The <see cref="IWebFileTransformationReadService"/>.</param>
         public PhysicalTransformedFileProvider(
             PhysicalFileProvider parentProvider,
             IWebFileTransformationReadService webFileTransformationService)
@@ -26,13 +18,11 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             m_webFileTransformationService = webFileTransformationService;
         }
 
-        /// <inheritdoc />
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
             return m_parentProvider.GetDirectoryContents(subpath);
         }
 
-        /// <inheritdoc />
         public IFileInfo GetFileInfo(string subpath)
         {
             IFileInfo iFileInfo = m_parentProvider.GetFileInfo(subpath);
@@ -52,7 +42,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                     transformedStream.Seek(0, SeekOrigin.Begin);
                 }
 
-                m_webFileTransformationService.RunTransformation(subpath, transformedStream);
+                m_webFileTransformationService.RunTransformation(subpath, transformedStream).GetAwaiter().GetResult();
                 transformedStream.Seek(0, SeekOrigin.Begin);
 
                 return new TransformableFileInfo(physicalFileInfo.Exists ? physicalFileInfo : null, transformedStream, physicalFileInfo.Exists ? null : subpath);
@@ -61,7 +51,6 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             return iFileInfo;
         }
 
-        /// <inheritdoc />
         public IChangeToken Watch(string filter)
         {
             return m_parentProvider.Watch(filter);

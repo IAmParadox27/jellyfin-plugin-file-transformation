@@ -1,25 +1,18 @@
-﻿using System.Text.RegularExpressions;
-using Jellyfin.Plugin.FileTransformation.Controller;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
+using Jellyfin.Plugin.FileTransformation.Library;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 {
     public class WebFileTransformationService : IWebFileTransformationReadService, IWebFileTransformationWriteService
     {
-        private readonly IDictionary<string, ICollection<TransformFile>> m_fileTransformations = new Dictionary<string, ICollection<TransformFile>>();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebFileTransformationService"/> class.
-        /// </summary>
-        public WebFileTransformationService()
-        {
-        }
+        private readonly ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>> m_fileTransformations = new ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>>();
 
         private string NormalizePath(string path)
         {
             return path.TrimStart('/');
         }
 
-        /// <inheritdoc />
         public bool NeedsTransformation(string path)
         {
             if (m_fileTransformations.ContainsKey(NormalizePath(path)))
@@ -35,8 +28,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             });
         }
 
-        /// <inheritdoc />
-        public void RunTransformation(string path, Stream stream)
+        public async Task RunTransformation(string path, Stream stream)
         {
             if (stream == null)
             {
@@ -45,7 +37,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
             path = NormalizePath(path);
 
-            ICollection<TransformFile>? pipeline = null;
+            ICollection<(Guid TransformId, TransformFile Delegate)>? pipeline = null;
 
             if (m_fileTransformations.ContainsKey(path))
             {
@@ -68,16 +60,15 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
             if (pipeline != null)
             {
-                foreach (TransformFile action in pipeline)
+                foreach ((_, TransformFile action) in pipeline)
                 {
                     stream.Seek(0, SeekOrigin.Begin);
-                    action(path, stream);
+                    await action(path, stream);
                 }
             }
         }
 
-        /// <inheritdoc />
-        public void AddTransformation(string path, TransformFile transformation)
+        public void AddTransformation(Guid id, string path, TransformFile transformation)
         {
             if (path == null)
             {
@@ -90,13 +81,19 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             }
 
             path = NormalizePath(path);
-            if (!m_fileTransformations.TryGetValue(path, out ICollection<TransformFile>? pipeline))
+            lock (m_fileTransformations)
             {
-                pipeline = new List<TransformFile>();
-                m_fileTransformations[path] = pipeline;
-            }
+                if (!m_fileTransformations.TryGetValue(path, out ICollection<(Guid TransformId, TransformFile Delegate)>? pipeline))
+                {
+                    pipeline = new List<(Guid TransformId, TransformFile Delegate)>();
+                    m_fileTransformations[path] = pipeline;
+                }
 
-            pipeline.Add(transformation);
+                if (!pipeline.Any(x => x.TransformId == id))
+                {
+                    pipeline.Add((id, transformation));
+                }
+            }
         }
     }
 }
