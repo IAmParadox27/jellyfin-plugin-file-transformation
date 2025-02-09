@@ -1,9 +1,7 @@
 <h1 align="center">File Transformation</h1>
 <h2 align="center">A Jellyfin Plugin</h2>
 <p align="center">
-	<img alt="Logo" width="256" height="256" src="https://camo.githubusercontent.com/ab4b1ec289bed0a0ac8dd2828c41b695dbfeaad8c82596339f09ce23b30d3eb3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f73656c666873742f69636f6e732f776562702f6a656c6c7966696e2e77656270" />
-	<br />
-	<sub>Custom Logo Coming Soon</sub>
+	<img alt="Logo" width="256" height="256" src="https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/main/src/logo.png" />
 	<br />
 	<br />
 	<a href="https://github.com/IAmParadox27/jellyfin-plugin-home-sections">
@@ -12,18 +10,10 @@
 	<a href="https://github.com/IAmParadox27/jellyfin-plugin-home-sections/releases">
 		<img alt="Current Release" src="https://img.shields.io/github/release/IAmParadox27/jellyfin-plugin-file-transformation.svg" />
 	</a>
-	<a href="https://www.nuget.org/packages/Jellyfin.Plugin.FileTransformation">
-		<img alt="NuGet Release" src="https://img.shields.io/nuget/v/Jellyfin.Plugin.FileTransformation" />
-	</a>
-  <a href="https://www.nuget.org/packages/Jellyfin.Plugin.Referenceable/1.2.2">
-    <img alt="Shield Example" src="https://img.shields.io/badge/JF%20Referenceable-v1.2.2-blue" /> 
-  </a>
 </p>
 
 ## Introduction
-File Transformation is a [Referenceable](https://github.com/IAmParadox27/jellyfin-plugin-referenceable) Jellyfin Plugin (and C# Library) that can be used to modify the served [jellyfin-web](https://github.com/jellyfin/jellyfin-web) content without having to modify the files directly.
-
-> :warning: This plugin makes use of [Jellyfin Referenceable](https://github.com/IAmParadox27/jellyfin-plugin-referenceable) using version `1.2.2`. Ensure all plugins that use this plugin are compatible with that version.
+File Transformation is a Jellyfin Plugin that can be used to modify the served [jellyfin-web](https://github.com/jellyfin/jellyfin-web) content without having to modify the files directly.
 
 The use cases for this can be seen in my other plugins [plugin-pages](https://github.com/IAmParadox27/jellyfin-plugin-pages) and [home-sections](https://github.com/IAmParadox27/jellyfin-plugin-home-sections) which both take advantage of this.
 
@@ -42,16 +32,27 @@ Well, this plugin is non destructive and allows multiple plugins to manipulate t
 2. Find "File Transformation" in the list and install it. No configuration is required.
 
 ### Prerequisites
-| Plugin Version | Jellyfin Version |
-|----------------|------------------|
-| 1.1.0          | 10.10.3          |
-| 1.2.*          | 10.10.5          |
+| Plugin Version | Jellyfin Version  |
+|----------------|-------------------|
+| 2.0.0          | 10.10.5           |
 
 ### Referencing this as a library
-Add `Jellyfin.Plugin.FileTransformation` from NuGet using the most appropriate version from the table above. All versions previous to 1.1.0 do not work correctly and have issues which were only discovered after making the release.
+Due to issues with Jellyfin's plugins being loaded into different load contexts this cannot be referenced directly. 
 
-```xml
-<PackageReference Include="Jellyfin.Plugin.FileTransformation" Version="1.2.1" />
+Instead you can send an HTTP POST request to `http(s)://{YOUR_JELLYFIN_URL}/FileTransformation/RegisterTransformation` with a body in the following format
+```json
+{
+  "id": "00000000-0000-0000-0000-000000000000", // Guid,
+  "fileNamePattern": "", // Regex Pattern for the file to patch
+  "tranformationEndpoint": "/YourPluginController/TransformEndpoint" // An endpoint on your plugin that will accept the content and mutate it.
+}
+```
+
+When your transformation endpoint is requested you will receive a POST request with the following json format
+```json
+{
+  "contents": "" // String containing the current state of the file being requested.
+}
 ```
 
 ## Requests
