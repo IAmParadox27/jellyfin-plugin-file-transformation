@@ -1,7 +1,7 @@
 <h1 align="center">File Transformation</h1>
 <h2 align="center">A Jellyfin Plugin</h2>
 <p align="center">
-	<img alt="Logo" width="256" height="256" src="https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/main/src/logo.png" />
+	<img alt="Logo" src="https://raw.githubusercontent.com/IAmParadox27/jellyfin-plugin-file-transformation/main/src/logo.png" />
 	<br />
 	<br />
 	<a href="https://github.com/IAmParadox27/jellyfin-plugin-home-sections">
