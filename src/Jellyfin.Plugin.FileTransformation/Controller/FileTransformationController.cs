@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Reflection;
 using System.Text;
 using Jellyfin.Plugin.FileTransformation.Library;
 using Jellyfin.Plugin.FileTransformation.Models;
@@ -39,7 +40,12 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
             HttpClient client = new HttpClient();
             if (!(payload.TransformationEndpoint.StartsWith("http") || payload.TransformationEndpoint.StartsWith("https")))
             {
-                client.BaseAddress = new Uri(m_serverApplicationHost.GetSmartApiUrl(IPAddress.Loopback));
+                string? publishedServerUrl = m_serverApplicationHost.GetType()
+                    .GetProperty("PublishedServerUrl", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(m_serverApplicationHost) as string;
+                m_logger.LogInformation($"Retrieved value for published server URL: {publishedServerUrl}");
+            
+                client.BaseAddress = new Uri(publishedServerUrl ?? $"http://localhost:{m_serverApplicationHost.HttpPort}");
+
                 m_logger.LogInformation($"Set base address to '{client.BaseAddress}'");
             }
             
