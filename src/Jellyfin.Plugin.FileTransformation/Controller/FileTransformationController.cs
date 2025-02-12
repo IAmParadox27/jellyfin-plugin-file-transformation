@@ -4,6 +4,7 @@ using Jellyfin.Plugin.FileTransformation.Library;
 using Jellyfin.Plugin.FileTransformation.Models;
 using MediaBrowser.Controller;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,10 +14,12 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
     public class FileTransformationController : ControllerBase
     {
         private readonly IServerApplicationHost m_serverApplicationHost;
+        private readonly ILogger<FileTransformationPlugin> m_logger;
 
-        public FileTransformationController(IServerApplicationHost serverApplicationHost)
+        public FileTransformationController(IServerApplicationHost serverApplicationHost, ILogger<FileTransformationPlugin> logger)
         {
             m_serverApplicationHost = serverApplicationHost;
+            m_logger = logger;
         }
         
         [HttpPost("RegisterTransformation")]
@@ -32,10 +35,12 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
 
         private async Task ApplyTransformation(string path, Stream contents, TransformationRegistrationPayload payload)
         {
+            m_logger.LogInformation($"Transformation requested for '{path}'");
             HttpClient client = new HttpClient();
             if (!(payload.TransformationEndpoint.StartsWith("http") || payload.TransformationEndpoint.StartsWith("https")))
             {
                 client.BaseAddress = new Uri(m_serverApplicationHost.GetSmartApiUrl(IPAddress.Loopback));
+                m_logger.LogInformation($"Set base address to '{client.BaseAddress}'");
             }
             
             using StreamReader reader = new StreamReader(contents, leaveOpen: true);
@@ -46,6 +51,8 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
             HttpResponseMessage responseMessage = await client
                 .PostAsync(payload.TransformationEndpoint, new StringContent(obj.ToString(Formatting.None), Encoding.UTF8, "application/json"));
             string transformedString = await responseMessage.Content.ReadAsStringAsync();
+            
+            m_logger.LogInformation($"Response for request '{responseMessage.RequestMessage?.RequestUri?.ToString()}' received from endpoint '{payload.TransformationEndpoint}' with code {responseMessage.StatusCode} {(int)responseMessage.StatusCode}");
             
             contents.Seek(0, SeekOrigin.Begin);
 

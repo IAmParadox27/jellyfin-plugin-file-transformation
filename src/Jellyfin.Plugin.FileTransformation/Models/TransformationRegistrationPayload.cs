@@ -10,7 +10,7 @@ namespace Jellyfin.Plugin.FileTransformation.Models
         [JsonPropertyName("fileNamePattern")]
         public string FileNamePattern { get; set; } = string.Empty;
         
-        [JsonPropertyName("tranformationEndpoint")]
+        [JsonPropertyName("transformationEndpoint")]
         public string TransformationEndpoint { get; set; } = string.Empty;
     }
 }

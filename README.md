@@ -44,7 +44,7 @@ Instead you can send an HTTP POST request to `http(s)://{YOUR_JELLYFIN_URL}/File
 {
   "id": "00000000-0000-0000-0000-000000000000", // Guid,
   "fileNamePattern": "", // Regex Pattern for the file to patch
-  "tranformationEndpoint": "/YourPluginController/TransformEndpoint" // An endpoint on your plugin that will accept the content and mutate it.
+  "transformationEndpoint": "/YourPluginController/TransformEndpoint" // An endpoint on your plugin that will accept the content and mutate it.
 }
 ```
 
