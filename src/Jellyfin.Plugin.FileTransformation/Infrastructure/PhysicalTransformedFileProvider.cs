@@ -1,6 +1,7 @@
 ﻿using Jellyfin.Plugin.FileTransformation.Library;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
@@ -9,13 +10,16 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
     {
         private readonly PhysicalFileProvider m_parentProvider;
         private readonly IWebFileTransformationReadService m_webFileTransformationService;
+        private readonly ILogger<FileTransformationPlugin> m_logger;
 
         public PhysicalTransformedFileProvider(
             PhysicalFileProvider parentProvider,
-            IWebFileTransformationReadService webFileTransformationService)
+            IWebFileTransformationReadService webFileTransformationService,
+            ILogger<FileTransformationPlugin> logger)
         {
             m_parentProvider = parentProvider;
             m_webFileTransformationService = webFileTransformationService;
+            m_logger = logger;
         }
 
         public IDirectoryContents GetDirectoryContents(string subpath)
@@ -28,9 +32,12 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             IFileInfo iFileInfo = m_parentProvider.GetFileInfo(subpath);
             if (!m_webFileTransformationService.NeedsTransformation(subpath))
             {
+                m_logger.LogInformation($"Serving raw file for: {subpath}");
                 return iFileInfo;
             }
 
+            m_logger.LogInformation($"Requested file has transformation registered: {subpath}");
+            
             if (iFileInfo is PhysicalFileInfo physicalFileInfo)
             {
                 MemoryStream transformedStream = new MemoryStream();
@@ -42,6 +49,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                     transformedStream.Seek(0, SeekOrigin.Begin);
                 }
 
+                m_logger.LogInformation($"Running transformation for: {subpath}");
                 m_webFileTransformationService.RunTransformation(subpath, transformedStream).GetAwaiter().GetResult();
                 transformedStream.Seek(0, SeekOrigin.Begin);
 

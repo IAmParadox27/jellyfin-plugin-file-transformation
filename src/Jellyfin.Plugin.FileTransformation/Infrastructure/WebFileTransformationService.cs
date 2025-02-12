@@ -1,13 +1,20 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.FileTransformation.Library;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 {
     public class WebFileTransformationService : IWebFileTransformationReadService, IWebFileTransformationWriteService
     {
         private readonly ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>> m_fileTransformations = new ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>>();
+        private readonly ILogger<FileTransformationPlugin> m_logger;
 
+        public WebFileTransformationService(ILogger<FileTransformationPlugin> logger)
+        {
+            m_logger = logger;
+        }
+        
         private string NormalizePath(string path)
         {
             return path.TrimStart('/');
@@ -70,6 +77,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
         public void AddTransformation(Guid id, string path, TransformFile transformation)
         {
+            m_logger.LogInformation($"Received transformation registration for '{path}' with ID '{id}'");
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
@@ -77,6 +85,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
             if (transformation == null)
             {
+                m_logger.LogError($"Transformation with ID '{id}' has null callback");
                 throw new ArgumentNullException(nameof(transformation));
             }
 
