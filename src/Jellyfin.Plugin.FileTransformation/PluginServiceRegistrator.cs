@@ -7,6 +7,7 @@ using MediaBrowser.Controller.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.FileTransformation
 {
@@ -26,7 +27,8 @@ namespace Jellyfin.Plugin.FileTransformation
         {
             return new PhysicalTransformedFileProvider(
                 new PhysicalFileProvider(serverConfigurationManager.ApplicationPaths.WebPath),
-                mainApplicationBuilder.ApplicationServices.GetRequiredService<IWebFileTransformationReadService>());
+                mainApplicationBuilder.ApplicationServices.GetRequiredService<IWebFileTransformationReadService>(),
+                mainApplicationBuilder.ApplicationServices.GetRequiredService<ILogger<FileTransformationPlugin>>());
         }
     }
 }
