@@ -35,6 +35,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
     
     <ItemGroup>
         <None Include="..\..\README.md" />
+        <None Include="..\logo.png" CopyToOutputDirectory="Always" />
     </ItemGroup>
     
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\FileTransformation')">
