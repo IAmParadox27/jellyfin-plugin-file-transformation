@@ -67,11 +67,18 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
             if (pipeline != null)
             {
-                foreach ((_, TransformFile action) in pipeline)
+                List<(Guid, TransformFile)> cachedPipeline = new List<(Guid, TransformFile)>();
+
+                do
                 {
-                    stream.Seek(0, SeekOrigin.Begin);
-                    await action(path, stream);
-                }
+                    cachedPipeline = pipeline.Where(x => !cachedPipeline.Contains(x)).ToList();
+                    
+                    foreach ((_, TransformFile action) in cachedPipeline)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        await action(path, stream);
+                    }
+                } while (cachedPipeline.Any());
             }
         }
 
