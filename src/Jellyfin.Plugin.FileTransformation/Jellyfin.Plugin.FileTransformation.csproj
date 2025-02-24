@@ -31,6 +31,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
 
     <ItemGroup>
       <EmbeddedResource Include="$(PkgLib_Harmony_Fork)\lib\net8.0\0Harmony.dll" />
+      <EmbeddedResource Include="Configuration\config.html" />
     </ItemGroup>
     
     <ItemGroup>

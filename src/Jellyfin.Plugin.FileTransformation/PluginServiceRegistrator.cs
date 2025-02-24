@@ -21,6 +21,8 @@ namespace Jellyfin.Plugin.FileTransformation
             serviceCollection.AddSingleton<WebFileTransformationService>()
                 .AddSingleton<IWebFileTransformationReadService>(s => s.GetRequiredService<WebFileTransformationService>())
                 .AddSingleton<IWebFileTransformationWriteService>(s => s.GetRequiredService<WebFileTransformationService>());
+
+            serviceCollection.AddSingleton<IFileTransformationLogger, FileTransformationLogger>();
         }
 
         private IFileProvider GetFileTransformationFileProvider(IServerConfigurationManager serverConfigurationManager, IApplicationBuilder mainApplicationBuilder)
@@ -28,7 +30,7 @@ namespace Jellyfin.Plugin.FileTransformation
             return new PhysicalTransformedFileProvider(
                 new PhysicalFileProvider(serverConfigurationManager.ApplicationPaths.WebPath),
                 mainApplicationBuilder.ApplicationServices.GetRequiredService<IWebFileTransformationReadService>(),
-                mainApplicationBuilder.ApplicationServices.GetRequiredService<ILogger<FileTransformationPlugin>>());
+                mainApplicationBuilder.ApplicationServices.GetRequiredService<IFileTransformationLogger>());
         }
     }
 }

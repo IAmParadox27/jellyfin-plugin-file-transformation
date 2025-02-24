@@ -15,7 +15,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
         public PhysicalTransformedFileProvider(
             PhysicalFileProvider parentProvider,
             IWebFileTransformationReadService webFileTransformationService,
-            ILogger<FileTransformationPlugin> logger)
+            IFileTransformationLogger logger)
         {
             m_parentProvider = parentProvider;
             m_webFileTransformationService = webFileTransformationService;
@@ -32,11 +32,11 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             IFileInfo iFileInfo = m_parentProvider.GetFileInfo(subpath);
             if (!m_webFileTransformationService.NeedsTransformation(subpath))
             {
-                m_logger.LogInformation($"Serving raw file for: {subpath}");
+                m_logger.LogDebug($"Serving raw file for: {subpath}");
                 return iFileInfo;
             }
 
-            m_logger.LogInformation($"Requested file has transformation registered: {subpath}");
+            m_logger.LogDebug($"Requested file has transformation registered: {subpath}");
             
             if (iFileInfo is PhysicalFileInfo physicalFileInfo)
             {
@@ -49,7 +49,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                     transformedStream.Seek(0, SeekOrigin.Begin);
                 }
 
-                m_logger.LogInformation($"Running transformation for: {subpath}");
+                m_logger.LogTrace($"Running transformation for: {subpath}");
                 m_webFileTransformationService.RunTransformation(subpath, transformedStream).GetAwaiter().GetResult();
                 transformedStream.Seek(0, SeekOrigin.Begin);
 

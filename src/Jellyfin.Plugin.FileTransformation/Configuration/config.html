@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>File Transformation</title>
+</head>
+<body>
+<div data-role="page" id="fileTransformationConfigurationPage" class="page type-interior pluginConfigurationPage fullWidthContent">
+    <div class="content-primary">
+        <div class="verticalSection">
+            <div class="sectionTitleContainer">
+                <h2 class="sectionTitle">File Transformation</h2>
+                <a is="emby-linkbutton" class="raised raised-mini" style="margin-left: 2em;" target="_blank"
+                   href="https://github.com/IAmParadox27/jellyfin-plugin-file-transformation">
+                    <i class="md-icon button-icon button-icon-left secondaryText"></i>
+                    <span>Help</span>
+                </a>
+            </div>
+        </div>
+        <hr class="solid">
+
+        <form class="fileTransformationConfigurationForm">
+            <div id="configurationWrapper">
+                <div class="inputContainer">
+                    <span>Debug Logging: </span>
+                    <select is="emby-select" class="emby-select-withcolor emby-select" data-id="debugLoggingSelect">
+                        <option value="Enabled">Enabled</option>
+                        <option value="Disabled">Disabled</option>
+                    </select>
+                    <span>Whether the plugin should output debug logging. (Note this will slow down your page response time, only enable this if you're creating an issue on GitHub to provide additional information)</span>
+                </div>
+            </div>
+            <br />
+            <button id="saveConfig" is="emby-button" type="submit" class="raised button-submit block">
+                <span>Save</span>
+            </button>
+        </form>
+    </div>
+    <script type="text/javascript">
+        if (typeof FileTransformation == 'undefined') {
+            
+            const FileTransformation = {
+                pluginId: "5e87cc92-571a-4d8d-8d98-d2d4147f9f90",
+                configurationWrapper: document.querySelector("#configurationWrapper"),
+
+                btnSave: document.querySelector("#saveConfig"),
+
+                saveConfig: function (e) {
+                    e.preventDefault();
+                    Dashboard.showLoadingMsg();
+                    const config = {
+                        DebugLoggingState: document.querySelector("[data-id=debugLoggingSelect]").value,
+                    };
+
+                    window.ApiClient.updatePluginConfiguration(FileTransformation.pluginId, config)
+                        .then(Dashboard.processPluginConfigurationUpdateResult)
+                        .catch(function (error) {
+                            console.error(error);
+                        })
+                        .finally(function () {
+                            Dashboard.hideLoadingMsg();
+                        });
+                },
+                loadConfig: function () {
+                    Dashboard.showLoadingMsg();
+                    window.ApiClient.getPluginConfiguration(FileTransformation.pluginId)
+                        .then(function (config) {
+                            document.querySelector("[data-id=debugLoggingSelect]").value = config.DebugLoggingState;
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                        })
+                        .finally(function () {
+                            Dashboard.hideLoadingMsg();
+                        });
+                },
+                init: function () {
+                    FileTransformation.btnSave.addEventListener("click", FileTransformation.saveConfig);
+                    FileTransformation.loadConfig();
+                }
+            }
+
+            // view.addEventListener("viewshow", function (e) {
+            document.querySelector('#fileTransformationConfigurationPage').addEventListener("pageshow", function () {
+                FileTransformation.init();
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

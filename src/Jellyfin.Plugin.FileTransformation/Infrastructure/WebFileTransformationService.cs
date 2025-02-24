@@ -10,7 +10,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
         private readonly ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>> m_fileTransformations = new ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>>();
         private readonly ILogger<FileTransformationPlugin> m_logger;
 
-        public WebFileTransformationService(ILogger<FileTransformationPlugin> logger)
+        public WebFileTransformationService(IFileTransformationLogger logger)
         {
             m_logger = logger;
         }
