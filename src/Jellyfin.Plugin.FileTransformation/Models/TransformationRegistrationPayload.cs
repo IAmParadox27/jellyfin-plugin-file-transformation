@@ -12,5 +12,8 @@ namespace Jellyfin.Plugin.FileTransformation.Models
         
         [JsonPropertyName("transformationEndpoint")]
         public string TransformationEndpoint { get; set; } = string.Empty;
+
+        [JsonPropertyName("transformationPipe")]
+        public string? TransformationPipe { get; set; } = null;
     }
 }

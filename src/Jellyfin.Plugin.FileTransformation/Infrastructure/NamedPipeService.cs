@@ -108,7 +108,6 @@ public class NamedPipeService : IHostedService
             m_writeService.AddTransformation(payload.Id, payload.FileNamePattern, async (path, contents) =>
             {
                 await TransformationHelper.ApplyTransformation(path, contents, payload, m_logger, m_serverApplicationHost);
-                Console.WriteLine(payload.TransformationEndpoint);
             });
         }
         
