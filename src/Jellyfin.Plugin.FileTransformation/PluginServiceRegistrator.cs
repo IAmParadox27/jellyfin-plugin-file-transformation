@@ -23,6 +23,8 @@ namespace Jellyfin.Plugin.FileTransformation
                 .AddSingleton<IWebFileTransformationWriteService>(s => s.GetRequiredService<WebFileTransformationService>());
 
             serviceCollection.AddSingleton<IFileTransformationLogger, FileTransformationLogger>();
+
+            serviceCollection.AddHostedService<NamedPipeService>();
         }
 
         private IFileProvider GetFileTransformationFileProvider(IServerConfigurationManager serverConfigurationManager, IApplicationBuilder mainApplicationBuilder)
