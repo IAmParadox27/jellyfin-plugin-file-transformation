@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Reflection;
 using System.Text;
+using Jellyfin.Plugin.FileTransformation.Helpers;
 using Jellyfin.Plugin.FileTransformation.Library;
 using Jellyfin.Plugin.FileTransformation.Models;
 using MediaBrowser.Controller;
@@ -28,7 +29,7 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
         {
             writeService.AddTransformation(payload.Id, payload.FileNamePattern, async (path, contents) =>
             {
-                await ApplyTransformation(path, contents, payload);
+                await TransformationHelper.ApplyTransformation(path, contents, payload, m_logger, m_serverApplicationHost);
             });
             
             return Ok();
