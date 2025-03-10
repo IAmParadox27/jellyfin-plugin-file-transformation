@@ -1,5 +1,6 @@
 ﻿using System.IO.Pipes;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using Jellyfin.Plugin.FileTransformation.Models;
 using MediaBrowser.Controller;
@@ -20,8 +21,27 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
             JObject obj = new JObject();
             obj.Add("contents", reader.ReadToEnd());
             
-            string transformedString;
-            if (payload.TransformationPipe != null)
+            string? transformedString = null;
+            if (payload.CallbackAssembly != null)
+            {
+                Assembly? assembly = AssemblyLoadContext.All
+                    .FirstOrDefault(x => x.Assemblies.Select(y => y.FullName).Contains(payload.CallbackAssembly))?
+                    .Assemblies.FirstOrDefault(x => x.FullName == payload.CallbackAssembly);
+
+                Type? type = assembly?.GetType(payload.CallbackClass!);
+
+                MethodInfo? method = type?.GetMethod(payload.CallbackMethod!);
+
+                if (method != null)
+                {
+                    ParameterInfo payloadParameter = method.GetParameters()[0];
+                    object? paramObj = obj.ToObject(payloadParameter.ParameterType);
+                    
+                    transformedString = (string)method.Invoke(null, new object?[] { paramObj })!;
+                }
+            }
+            
+            if (transformedString == null && payload.TransformationPipe != null)
             {
                 NamedPipeClientStream pipe = new NamedPipeClientStream(".", payload.TransformationPipe, PipeDirection.InOut);
                 await pipe.ConnectAsync();
@@ -46,7 +66,8 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
                 }
                 transformedString = Encoding.UTF8.GetString(memoryStream.ToArray());
             }
-            else
+            
+            if (transformedString == null)
             {
                 HttpClient client = new HttpClient();
                 if (!(payload.TransformationEndpoint.StartsWith("http") || payload.TransformationEndpoint.StartsWith("https")))

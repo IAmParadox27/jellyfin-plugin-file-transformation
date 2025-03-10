@@ -14,9 +14,13 @@ namespace Jellyfin.Plugin.FileTransformation
 
         public override string Name => "File Transformation";
         
-        public FileTransformationPlugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) : base(applicationPaths, xmlSerializer)
+        public IServiceProvider ServiceProvider { get; }
+        
+        public FileTransformationPlugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, IServiceProvider serviceProvider) : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
+            
+            ServiceProvider = serviceProvider;
         }
         
         public IEnumerable<PluginPageInfo> GetPages()
