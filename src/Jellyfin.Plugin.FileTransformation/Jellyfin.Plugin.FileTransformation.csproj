@@ -11,16 +11,16 @@
 
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
         
-        <Version>2.1.0.0 </Version>
+        <Version>2.3.0.0 </Version>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         
-      <PackageReference Include="Jellyfin.Model" Version="10.10.6" />
-      <PackageReference Include="Jellyfin.Controller" Version="10.10.6" />
-      <PackageReference Include="Jellyfin.Data" Version="10.10.6" />
-      <PackageReference Include="Jellyfin.Extensions" Version="10.10.6" />
+      <PackageReference Include="Jellyfin.Model" Version="10.10.7" />
+      <PackageReference Include="Jellyfin.Controller" Version="10.10.7" />
+      <PackageReference Include="Jellyfin.Data" Version="10.10.7" />
+      <PackageReference Include="Jellyfin.Extensions" Version="10.10.7" />
 
       <PackageReference Include="Lib.Harmony" Version="2.3.5" GeneratePathProperty="true" />
 
