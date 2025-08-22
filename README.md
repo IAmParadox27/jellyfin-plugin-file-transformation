@@ -83,7 +83,7 @@ When your transformation method is invoked you will receive a object representin
 ```
 
 ## Requests
-If any functionality is desired to be overridden from Jellyfin's server please open a `feature-request` issue on GitHub.
+If any functionality is desired to be overridden from Jellyfin's server please open a request on https://features.iamparadox.dev.
 
 ## FAQ
 > Frequent questions will be added here as they are asked.
