@@ -43,18 +43,39 @@ Well, this plugin is non destructive and allows multiple plugins to manipulate t
 | 2.0.0          | 10.10.5           |
 
 ### Referencing this as a library
-Due to issues with Jellyfin's plugins being loaded into different load contexts this cannot be referenced directly. 
+Due to issues with Jellyfin's plugins being loaded into different load contexts this cannot be referenced directly.
 
-Instead you can send an HTTP POST request to `http(s)://{YOUR_JELLYFIN_URL}/FileTransformation/RegisterTransformation` with a body in the following format
+Instead you can use reflection to invoke the plugin directly to register your transformation.
+
+1. Prepare your payload
 ```json
 {
-  "id": "00000000-0000-0000-0000-000000000000", // Guid,
-  "fileNamePattern": "", // Regex Pattern for the file to patch
-  "transformationEndpoint": "/YourPluginController/TransformEndpoint" // An endpoint on your plugin that will accept the content and mutate it.
+    "id": "00000000-0000-0000-0000-000000000000", // Guid
+	"fileNamePattern": "", // Regex Patterm for the file to patch
+	"callbackAssembly": GetType().Assembly.FullName, // Example value is a string from C# that should be resolved before adding to json
+	"callbackClass": "", // The name of the class that should be invoked from the above assembly
+	"callbackMethod": "" // The name of the function that should be invoked from the above class
+}
+```
+2. Send your payload to the file transformation assembly
+```csharp
+
+Assembly? fileTransformationAssembly =
+	AssemblyLoadContext.All.SelectMany(x => x.Assemblies).FirstOrDefault(x =>
+		x.FullName?.Contains(".FileTransformation") ?? false);
+
+if (fileTransformationAssembly != null)
+{
+	Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+
+	if (pluginInterfaceType != null)
+	{
+		pluginInterfaceType.GetMethod("RegisterTransformation")?.Invoke(null, new object?[] { payload });
+	}
 }
 ```
 
-When your transformation endpoint is requested you will receive a POST request with the following json format
+When your transformation method is invoked you will receive a object representing the following json format
 ```json
 {
   "contents": "" // String containing the current state of the file being requested.
