@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Prometheus;
 
 namespace Jellyfin.Plugin.FileTransformation.Helpers
@@ -139,7 +140,14 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
                     {
                         FileProvider = WebStaticFilesFileProvider?.Invoke(serverConfigurationManager, mainApp) ?? new PhysicalFileProvider(serverConfigurationManager.ApplicationPaths.WebPath),
                         RequestPath = "/web",
-                        ContentTypeProvider = extensionProvider
+                        ContentTypeProvider = extensionProvider,
+                        OnPrepareResponse = (context) =>
+                        {
+                            if (Path.GetFileName(context.File.Name).Equals("index.html", StringComparison.Ordinal))
+                            {
+                                context.Context.Response.Headers.CacheControl = new StringValues("no-cache");
+                            }
+                        }
                     });
 
                     mainApp.UseRobotsRedirection();
@@ -152,7 +160,6 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
                 mainApp.UseRouting();
                 mainApp.UseAuthorization();
 
-                mainApp.UseLanFiltering();
                 mainApp.UseIPBasedAccessValidation();
                 mainApp.UseWebSocketHandler();
                 mainApp.UseServerStartupMessage();
