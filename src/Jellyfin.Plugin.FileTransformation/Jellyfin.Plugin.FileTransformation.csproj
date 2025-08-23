@@ -40,6 +40,18 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
         <None Include="..\logo.png" CopyToOutputDirectory="Always" />
     </ItemGroup>
     
+    <!-- 10.10.7 Specific Code from non 10.10.7 builds -->
+    <ItemGroup Condition="'$(JellyfinVersion)' != '10.10.7'">
+        <None Include="JellyfinVersionSpecific/10.10.7/*.cs" />
+        <Compile Remove="JellyfinVersionSpecific/10.10.7/*.cs" />
+    </ItemGroup>
+
+    <!-- Remove 10.11.0 Specific Code from non 10.11.0 builds -->
+    <ItemGroup Condition="'$(JellyfinVersion)' != '10.11.0-rc5'">
+        <None Include="JellyfinVersionSpecific/10.11.0-rc5/*.cs" />
+        <Compile Remove="JellyfinVersionSpecific/10.11.0-rc5/*.cs" />
+    </ItemGroup>
+    
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\FileTransformation')">
         <Exec Condition="'$(JellyfinVersion)' == '10.11.0-rc5'" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\FileTransformation&quot; /y" />
         <Exec Condition="'$(JellyfinVersion)' == '10.10.7'"     Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_10_7\plugins\FileTransformation&quot; /y" />
