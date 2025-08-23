@@ -1,6 +1,8 @@
+using System.Reflection;
 using Jellyfin.Plugin.FileTransformation.Library;
 using Jellyfin.Plugin.FileTransformation.Infrastructure;
 using Jellyfin.Plugin.FileTransformation.Helpers;
+using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Plugins;
@@ -15,6 +17,10 @@ namespace Jellyfin.Plugin.FileTransformation
     {
         public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
+            IServerApplicationPaths? applicationPaths = (IServerApplicationPaths?)applicationHost.GetType().GetProperty("ApplicationPaths", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(applicationHost);
+            ILoggerFactory? loggerFactory = (ILoggerFactory?)applicationHost.GetType().GetProperty("LoggerFactory", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(applicationHost);
+            
+            ModuleInitializer.Initialize(applicationPaths, loggerFactory?.CreateLogger(typeof(ModuleInitializer).FullName ?? typeof(ModuleInitializer).Name));
             StartupHelper.WebDefaultFilesFileProvider = GetFileTransformationFileProvider;
             StartupHelper.WebStaticFilesFileProvider = GetFileTransformationFileProvider;
             
