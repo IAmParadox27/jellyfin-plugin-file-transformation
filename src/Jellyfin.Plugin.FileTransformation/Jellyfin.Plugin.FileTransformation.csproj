@@ -12,15 +12,16 @@
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
         
         <Version>2.3.0.0 </Version>
+        <JellyfinVersion>10.11.0-rc5</JellyfinVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         
-      <PackageReference Include="Jellyfin.Model" Version="10.11.0-rc5" />
-      <PackageReference Include="Jellyfin.Controller" Version="10.11.0-rc5" />
-      <PackageReference Include="Jellyfin.Data" Version="10.11.0-rc5" />
-      <PackageReference Include="Jellyfin.Extensions" Version="10.11.0-rc5" />
+      <PackageReference Include="Jellyfin.Model" Version="$(JellyfinVersion)" />
+      <PackageReference Include="Jellyfin.Controller" Version="$(JellyfinVersion)" />
+      <PackageReference Include="Jellyfin.Data" Version="$(JellyfinVersion)" />
+      <PackageReference Include="Jellyfin.Extensions" Version="$(JellyfinVersion)" />
 
       <PackageReference Include="Lib.Harmony" Version="2.4.0" GeneratePathProperty="true" />
 
@@ -40,7 +41,8 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
     </ItemGroup>
     
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server\plugins\FileTransformation')">
-      <Exec Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\FileTransformation&quot; /y" />
+        <Exec Condition="'$(JellyfinVersion)' == '10.11.0-rc5'" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server\plugins\FileTransformation&quot; /y" />
+        <Exec Condition="'$(JellyfinVersion)' == '10.10.7'"     Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_10_7\plugins\FileTransformation&quot; /y" />
     </Target>
 
 </Project>
