@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Reflection;
+using Jellyfin.Plugin.FileTransformation.Attributes;
 using Jellyfin.Plugin.FileTransformation.Extensions;
+using Jellyfin.Plugin.FileTransformation.JellyfinVersionSpecific;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Prometheus;
 
 namespace Jellyfin.Plugin.FileTransformation.Helpers
@@ -140,7 +143,7 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
                         FileProvider = WebStaticFilesFileProvider?.Invoke(serverConfigurationManager, mainApp) ?? new PhysicalFileProvider(serverConfigurationManager.ApplicationPaths.WebPath),
                         RequestPath = "/web",
                         ContentTypeProvider = extensionProvider
-                    });
+                    }.ConfigureVersionSpecific());
 
                     mainApp.UseRobotsRedirection();
                 }
@@ -152,7 +155,11 @@ namespace Jellyfin.Plugin.FileTransformation.Helpers
                 mainApp.UseRouting();
                 mainApp.UseAuthorization();
 
-                mainApp.UseLanFiltering();
+                // This was removed as part of 10.11 release, keeping here for backwards compatibility.
+                if (JellyfinVersionAttribute.GetVersion() == "10.10.7")
+                {
+                    mainApp.UseLanFiltering();
+                }
                 mainApp.UseIPBasedAccessValidation();
                 mainApp.UseWebSocketHandler();
                 mainApp.UseServerStartupMessage();
