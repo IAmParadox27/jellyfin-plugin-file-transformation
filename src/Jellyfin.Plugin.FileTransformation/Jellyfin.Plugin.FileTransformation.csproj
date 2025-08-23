@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <JellyfinVersion>10.11.0-rc5</JellyfinVersion>
+        <TargetFramework Condition="'$(JellyfinVersion)' == '10.11.0-rc5'">net9.0</TargetFramework>
+        <TargetFramework Condition="'$(JellyfinVersion)' == '10.10.7'">net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -12,7 +14,6 @@
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
         
         <Version>2.3.0.0 </Version>
-        <JellyfinVersion>10.11.0-rc5</JellyfinVersion>
     </PropertyGroup>
 
     <ItemGroup>
