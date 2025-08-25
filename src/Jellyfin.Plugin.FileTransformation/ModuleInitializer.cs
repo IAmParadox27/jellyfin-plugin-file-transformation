@@ -43,17 +43,18 @@ namespace Jellyfin.Plugin.FileTransformation
                     {
                         // We tried the supplied jellyfin TempDirectory and we didn't have write permissions. We're going to just use the configurations directory
                         // as if this fails the user has other problems.
-                        logger?.LogWarning($"Unable to create temp directory for file transformation plugin. Tried '{applicationPaths.TempDirectory}'. Now attempting '{applicationPaths.ConfigurationDirectoryPath}' before failing.");
+                        string fallbackTempDir = Path.Combine(applicationPaths!.ProgramDataPath, "temp");
+                        logger?.LogWarning($"Unable to create temp directory for file transformation plugin. Tried '{applicationPaths.TempDirectory}'. Now attempting '{fallbackTempDir}' before failing.");
 
                         try
                         {
-                            tmpDllLocation = Path.Combine(applicationPaths.ConfigurationDirectoryPath, Path.GetFileName(tmpDllLocation));
+                            tmpDllLocation = Path.Combine(fallbackTempDir, Path.GetFileName(tmpDllLocation));
                             dllFileInfo = new FileInfo(tmpDllLocation);
                             dllFileInfo.Directory?.Create();
                         }
                         catch
                         {
-                            logger?.LogError($"Unable to create temp directory for file transformation plugin. Tried '{applicationPaths.TempDirectory}' and '{applicationPaths.ConfigurationDirectoryPath}' as directories, neither allowed writing. Falling back to using a fallback AssemblyLoadContext and loading DLL to get assembly name before unloading and loading properly.");
+                            logger?.LogError($"Unable to create temp directory for file transformation plugin. Tried '{applicationPaths.TempDirectory}' and '{fallbackTempDir}' as directories, neither allowed writing. Falling back to using a fallback AssemblyLoadContext and loading DLL to get assembly name before unloading and loading properly.");
                             tmpDllLocation = null;
                         }
                     }
@@ -91,6 +92,15 @@ namespace Jellyfin.Plugin.FileTransformation
                 Assembly loadedAssembly;
                 if (!assemblyLoadContext.Assemblies.Any(x => x.FullName == assemblyName.FullName))
                 {
+                    string jfTempLocation = Path.Combine(applicationPaths!.ProgramDataPath, "temp");
+                    
+                    DirectoryInfo jfTempDirectory = new DirectoryInfo(jfTempLocation);
+                    if (!jfTempDirectory.Exists)
+                    {
+                        jfTempDirectory.Create();
+                    }
+                    
+                    Environment.SetEnvironmentVariable("MONOMOD_HelperDropPath", jfTempLocation);
                     loadedAssembly = assemblyLoadContext.LoadFromStream(assemblyStream);
                 }
                 else
