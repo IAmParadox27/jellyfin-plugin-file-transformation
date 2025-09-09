@@ -9,12 +9,14 @@ namespace Jellyfin.Plugin.FileTransformation.JellyfinVersionSpecific
         {
             options.OnPrepareResponse = (context) =>
             {
-                if (Path.GetFileName(context.File.Name).Equals("index.html", StringComparison.Ordinal))
+                var fileName = Path.GetFileName(context.File.Name);
+                if (fileName.Equals("index.html", StringComparison.OrdinalIgnoreCase) ||
+                    fileName.Equals("main.jellyfin.bundle.js", StringComparison.OrdinalIgnoreCase))
                 {
                     context.Context.Response.Headers.CacheControl = new StringValues("no-cache");
                 }
             };
-            
+
             return options;
         }
     }
