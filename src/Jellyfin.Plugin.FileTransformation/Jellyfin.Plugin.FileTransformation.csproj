@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <JellyfinVersion>10.11.0-rc8</JellyfinVersion>
+        <JellyfinVersion>10.11.0</JellyfinVersion>
         <TargetFramework Condition="$(JellyfinVersion.StartsWith('10.11.0'))">net9.0</TargetFramework>
         <TargetFramework Condition="'$(JellyfinVersion)' == '10.10.7'">net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -45,12 +45,6 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
     <ItemGroup Condition="'$(JellyfinVersion)' != '10.10.7'">
         <None Include="JellyfinVersionSpecific/10.10.7/*.cs" />
         <Compile Remove="JellyfinVersionSpecific/10.10.7/*.cs" />
-    </ItemGroup>
-
-    <!-- Remove 10.11.0 Specific Code from non 10.11.0 builds -->
-    <ItemGroup Condition="'$(JellyfinVersion)' != '10.11.0-rc8'">
-        <None Include="JellyfinVersionSpecific/10.11.0-rc8/*.cs" />
-        <Compile Remove="JellyfinVersionSpecific/10.11.0-rc8/*.cs" />
     </ItemGroup>
 
     <!-- Remove 10.11.0 Specific Code from non 10.11.0 builds -->
