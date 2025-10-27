@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Jellyfin.Plugin.FileTransformation.Library;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Primitives;
 
 namespace Jellyfin.Plugin.FileTransformation.JellyfinVersionSpecific
