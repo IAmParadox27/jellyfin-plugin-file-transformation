@@ -37,10 +37,11 @@ Well, this plugin is non destructive and allows multiple plugins to manipulate t
 1. Add `https://www.iamparadox.dev/jellyfin/plugins/manifest.json` as a plugin source repository on your Jellyfin server.
 2. Find "File Transformation" in the list and install it. No configuration is required.
 
-### Prerequisites
-| Plugin Version | Jellyfin Version  |
-|----------------|-------------------|
-| 2.0.0          | 10.10.5           |
+### FAQ
+
+#### I've updated Jellyfin to latest version but I can't see the plugin available in the catalogue
+
+The likelihood is the plugin hasn't been updated for that version of Jellyfin and the plugins are strictly 1 version compatible. Please wait until an update has been pushed. If you can see the version number in the release assets then please make an issue, but if its not in the assets, please wait. I know Jellyfin has updated, I'll update when I can.
 
 ### Referencing this as a library
 Due to issues with Jellyfin's plugins being loaded into different load contexts this cannot be referenced directly.
