@@ -18,7 +18,8 @@
         </div>
         <hr class="solid">
 
-        <form class="fileTransformationConfigurationForm">
+        <!-- Might need to revisit the 95% here to make it responsive --> 
+        <form class="fileTransformationConfigurationForm" style="max-width: 95%">
             <div id="configurationWrapper">
                 <div class="inputContainer">
                     <span>Debug Logging: </span>
@@ -30,11 +31,45 @@
                 </div>
             </div>
             <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th style="vertical-align: top;width: 33%;text-align: left;">Filename Pattern<br/><br /><span style="font-size: 75%; font-weight: normal; font-style: italic;">The regex pattern of the filename you wish to modify. <i>Exact filenames are supported and checked first.</i></span></th>
+                        <th style="vertical-align: top;width: 33%;text-align: left;">Search String<br/><br/><span style="font-size: 75%; font-weight: normal; font-style: italic;">The text that should be looked for in the file to be replaced.</span></th>
+                        <th style="vertical-align: top;width: 34%;text-align: left;">Replacement String<br/><br/><span style="font-size: 75%; font-weight: normal; font-style: italic;">The text that should replace the Search String in the file.  If you are inserting code/elements, ensure that you append or prepend the original search string into this replacement.</span></th>
+                    </tr>
+                </thead>
+            </table>
+            <br />
             <button id="saveConfig" is="emby-button" type="submit" class="raised button-submit block">
                 <span>Save</span>
             </button>
         </form>
     </div>
+    <template id="pluginConfiguredTransformationTemplate">
+        <tr>
+            <td style="vertical-align: top">
+                <input type="hidden" data-id="metaTransformationId" />
+
+                <input is="emby-input" type="text" data-id="txtFilenamePattern" />
+                <div class="inputContainer">
+                    <div class="fieldDescription">The regex pattern of the filename you wish to modify. <i>Exact filenames are supported and checked first.</i></div>
+                </div>
+            </td>
+            <td style="vertical-align: top">
+                <textarea style="font-family: 'Courier New', monospace;display:block;resize: vertical" class="emby-textarea emby-input" data-id="txtSearchString"></textarea>
+                <div class="inputContainer">
+                    <div class="fieldDescription">The text that should be looked for in the file to be replaced.</div>
+                </div>
+            </td>
+            <td style="vertical-align: top">
+                <textarea style="font-family: 'Courier New', monospace;display:block;resize: vertical" class="emby-textarea emby-input" data-id="txtReplaceString"></textarea>
+                <div class="inputContainer">
+                    <div class="fieldDescription">The text that should replace the Search String in the file.  If you are inserting code/elements, ensure that you append or prepend the original search string into this replacement.</div>
+                </div>
+            </td>
+        </tr>
+    </template>
     <script type="text/javascript">
         if (typeof FileTransformation == 'undefined') {
             
