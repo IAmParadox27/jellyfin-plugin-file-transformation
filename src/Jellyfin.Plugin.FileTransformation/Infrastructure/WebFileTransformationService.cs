@@ -111,5 +111,23 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 }
             }
         }
+
+        public void RemoveTransformation(Guid id)
+        {
+            foreach (KeyValuePair<string, ICollection<(Guid TransformId, TransformFile Delegate)>> pipelines in m_fileTransformations)
+            {
+                (Guid TransformId, TransformFile Delegate)? pipeline = pipelines.Value.FirstOrDefault(x => x.TransformId == id);
+                if (pipeline != null)
+                {
+                    pipelines.Value.Remove(pipeline.Value);
+                }
+            }
+        }
+
+        public void UpdateTransformation(Guid id, string path, TransformFile transformation)
+        {
+            RemoveTransformation(id);
+            AddTransformation(id, path, transformation);
+        }
     }
 }
