@@ -8,5 +8,5 @@ using Jellyfin.Plugin.FileTransformation.Attributes;
 [assembly: AssemblyProduct("Jellyfin.Plugin.FileTransformation")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyTitle("Jellyfin.Plugin.FileTransformation")]
-[assembly: AssemblyVersion("2.4.0.0")]
-[assembly: JellyfinVersion("10.11.2")]
+[assembly: AssemblyVersion("2.5.0.0")]
+[assembly: JellyfinVersion("10.11.3")]

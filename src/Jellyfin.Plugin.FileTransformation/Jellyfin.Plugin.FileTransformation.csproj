@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <JellyfinVersion>10.11.2</JellyfinVersion>
+        <JellyfinVersion>10.11.3</JellyfinVersion>
         <JellyfinNugetVersion Condition="!$(JellyfinVersion.StartsWith('10.11'))">$(JellyfinVersion)</JellyfinNugetVersion>
         <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.11'))">$(JellyfinVersion)</JellyfinNugetVersion>
         <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.11.1'))">10.11.0</JellyfinNugetVersion>
@@ -17,7 +17,7 @@
 
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
         
-        <Version>2.4.0.0 </Version>
+        <Version>2.5.0.0 </Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -62,7 +62,7 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
     </ItemGroup>
     
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation')">
-        <Exec Condition="'$(JellyfinVersion)' == '10.11.1'" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation&quot; /y" />
+        <Exec Condition="$(JellyfinVersion.StartsWith('10.11'))" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation&quot; /y" />
         <Exec Condition="'$(JellyfinVersion)' == '10.10.7'"     Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_10_7\plugins\FileTransformation&quot; /y" />
     </Target>
 
