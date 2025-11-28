@@ -37,8 +37,10 @@
                         <th style="vertical-align: top;width: 33%;text-align: left;">Filename Pattern<br/><br /><span style="font-size: 75%; font-weight: normal; font-style: italic;">The regex pattern of the filename you wish to modify. <i>Exact filenames are supported and checked first.</i></span></th>
                         <th style="vertical-align: top;width: 33%;text-align: left;">Search String<br/><br/><span style="font-size: 75%; font-weight: normal; font-style: italic;">The text that should be looked for in the file to be replaced.</span></th>
                         <th style="vertical-align: top;width: 34%;text-align: left;">Replacement String<br/><br/><span style="font-size: 75%; font-weight: normal; font-style: italic;">The text that should replace the Search String in the file.  If you are inserting code/elements, ensure that you append or prepend the original search string into this replacement.</span></th>
+                        <th style="vertical-align: top;text-align: right;"><button is="emby-button" id="add-custom-button" type="button" class="raised button-submit block">Add</button></th>
                     </tr>
                 </thead>
+                <tbody id="configs-host"></tbody>
             </table>
             <br />
             <button id="saveConfig" is="emby-button" type="submit" class="raised button-submit block">
@@ -49,25 +51,16 @@
     <template id="pluginConfiguredTransformationTemplate">
         <tr>
             <td style="vertical-align: top">
+                <input class="emby-input" type="text" data-id="txtFilenamePattern" />
                 <input type="hidden" data-id="metaTransformationId" />
-
-                <input is="emby-input" type="text" data-id="txtFilenamePattern" />
-                <div class="inputContainer">
-                    <div class="fieldDescription">The regex pattern of the filename you wish to modify. <i>Exact filenames are supported and checked first.</i></div>
-                </div>
             </td>
             <td style="vertical-align: top">
                 <textarea style="font-family: 'Courier New', monospace;display:block;resize: vertical" class="emby-textarea emby-input" data-id="txtSearchString"></textarea>
-                <div class="inputContainer">
-                    <div class="fieldDescription">The text that should be looked for in the file to be replaced.</div>
-                </div>
             </td>
             <td style="vertical-align: top">
                 <textarea style="font-family: 'Courier New', monospace;display:block;resize: vertical" class="emby-textarea emby-input" data-id="txtReplaceString"></textarea>
-                <div class="inputContainer">
-                    <div class="fieldDescription">The text that should replace the Search String in the file.  If you are inserting code/elements, ensure that you append or prepend the original search string into this replacement.</div>
-                </div>
             </td>
+            <td style="vertical-align: top;text-align: right;"><button is="emby-button" data-id="remove-button" type="button" class="raised button-submit block">Remove</button></td>
         </tr>
     </template>
     <script type="text/javascript">
@@ -76,14 +69,34 @@
             const FileTransformation = {
                 pluginId: "5e87cc92-571a-4d8d-8d98-d2d4147f9f90",
                 configurationWrapper: document.querySelector("#configurationWrapper"),
+                configsHost: document.querySelector("#configs-host"),
 
                 btnSave: document.querySelector("#saveConfig"),
+                btnAddCustom: document.querySelector("#add-custom-button"),
 
                 saveConfig: function (e) {
                     e.preventDefault();
                     Dashboard.showLoadingMsg();
+                    
+                    let transformations = [];
+                    
+                    document.querySelectorAll("#configs-host tr").forEach(function (tr) {
+                        const metaTransformationId = tr.querySelector("[data-id=metaTransformationId]").value;
+                        const filenamePattern = tr.querySelector("[data-id=txtFilenamePattern]").value;
+                        const searchString = tr.querySelector("[data-id=txtSearchString]").value;
+                        const replaceString = tr.querySelector("[data-id=txtReplaceString]").value;
+                        
+                        transformations.push({
+                            Id: metaTransformationId,
+                            FilenamePattern: filenamePattern,
+                            SearchText: searchString,
+                            ReplaceText: replaceString
+                        })
+                    })
+                    
                     const config = {
                         DebugLoggingState: document.querySelector("[data-id=debugLoggingSelect]").value,
+                        Transformations: transformations
                     };
 
                     window.ApiClient.updatePluginConfiguration(FileTransformation.pluginId, config)
@@ -100,6 +113,8 @@
                     window.ApiClient.getPluginConfiguration(FileTransformation.pluginId)
                         .then(function (config) {
                             document.querySelector("[data-id=debugLoggingSelect]").value = config.DebugLoggingState;
+                            
+                            config.Transformations.forEach(FileTransformation.addNewConfig);
                         })
                         .catch(function (error) {
                             console.error(error);
@@ -108,8 +123,37 @@
                             Dashboard.hideLoadingMsg();
                         });
                 },
+                addNewConfig: function (config = undefined) {
+                    if (config === undefined) {
+                        config = {
+                            Id: crypto.randomUUID(),
+                            FilenamePattern: "",
+                            SearchText: "",
+                            ReplaceText: ""
+                        };
+                    }
+                    
+                    const template = document.querySelector("#pluginConfiguredTransformationTemplate");
+                    const clone = template.content.cloneNode(true);
+                    clone.querySelector("[data-id=metaTransformationId]").value = config.Id;
+                    clone.querySelector("[data-id=txtFilenamePattern]").value = config.FilenamePattern;
+                    clone.querySelector("[data-id=txtSearchString]").value = config.SearchText;
+                    clone.querySelector("[data-id=txtReplaceString]").value = config.ReplaceText;
+                    
+                    clone.querySelector("[data-id=remove-button]").addEventListener("click", FileTransformation.removeConfig);
+                    
+                    FileTransformation.configsHost.appendChild(clone);
+                },
+                removeConfig: function (e) {
+                    FileTransformation.configsHost.removeChild(e.target.closest("tr"));
+                },
+                addNewConfigEvent: function (e) {
+                    e.preventDefault();
+                    FileTransformation.addNewConfig();
+                },
                 init: function () {
                     FileTransformation.btnSave.addEventListener("click", FileTransformation.saveConfig);
+                    FileTransformation.btnAddCustom.addEventListener("click", FileTransformation.addNewConfigEvent);
                     FileTransformation.loadConfig();
                 }
             }
