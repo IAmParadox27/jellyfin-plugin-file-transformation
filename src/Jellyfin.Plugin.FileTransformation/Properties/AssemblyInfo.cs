@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Jellyfin.Plugin.FileTransformation.Attributes;
 
@@ -9,4 +9,4 @@ using Jellyfin.Plugin.FileTransformation.Attributes;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyTitle("Jellyfin.Plugin.FileTransformation")]
 [assembly: AssemblyVersion("2.5.0.0")]
-[assembly: JellyfinVersion("10.11.3")]
+[assembly: JellyfinVersion("10.12.0")]

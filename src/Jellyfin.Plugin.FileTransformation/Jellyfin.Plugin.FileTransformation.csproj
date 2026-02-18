@@ -1,12 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <JellyfinVersion>10.11.3</JellyfinVersion>
-        <JellyfinNugetVersion Condition="!$(JellyfinVersion.StartsWith('10.11'))">$(JellyfinVersion)</JellyfinNugetVersion>
+        <JellyfinVersion>10.12.0</JellyfinVersion>
+        <JellyfinNugetVersion Condition="!$(JellyfinVersion.StartsWith('10.11')) AND !$(JellyfinVersion.StartsWith('10.12'))">$(JellyfinVersion)</JellyfinNugetVersion>
         <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.11'))">$(JellyfinVersion)</JellyfinNugetVersion>
+        <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.12'))">$(JellyfinVersion)</JellyfinNugetVersion>
         <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.11.1'))">10.11.0</JellyfinNugetVersion>
         <JellyfinNugetVersion Condition="$(JellyfinVersion.StartsWith('10.11.0'))">10.11.0</JellyfinNugetVersion>
         <TargetFramework Condition="$(JellyfinVersion.StartsWith('10.11'))">net9.0</TargetFramework>
+        <TargetFramework Condition="$(JellyfinVersion.StartsWith('10.12'))">net9.0</TargetFramework>
         <TargetFramework Condition="'$(JellyfinVersion)' == '10.10.7'">net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -56,13 +58,20 @@ This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pul
         <None Include="JellyfinVersionSpecific/10.11.0/*.cs" />
         <Compile Remove="JellyfinVersionSpecific/10.11.0/*.cs" />
     </ItemGroup>
-    <ItemGroup Condition="!$(JellyfinVersion.StartsWith('10.11'))">
+    <ItemGroup Condition="!$(JellyfinVersion.StartsWith('10.11')) AND !$(JellyfinVersion.StartsWith('10.12'))">
         <None Include="JellyfinVersionSpecific/10.11/*.cs" />
         <Compile Remove="JellyfinVersionSpecific/10.11/*.cs" />
     </ItemGroup>
     
-    <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation')">
+    <!-- Remove 10.12.0 Specific Code from non 10.12.0 builds -->
+    <ItemGroup Condition="!$(JellyfinVersion.StartsWith('10.12'))">
+        <None Include="JellyfinVersionSpecific/10.12/*.cs" />
+        <Compile Remove="JellyfinVersionSpecific/10.12/*.cs" />
+    </ItemGroup>
+    
+    <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation') OR Exists('C:\ProgramData\Jellyfin\Server_10_12\plugins\FileTransformation')">
         <Exec Condition="$(JellyfinVersion.StartsWith('10.11'))" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation&quot; /y" />
+        <Exec Condition="$(JellyfinVersion.StartsWith('10.12'))" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_12\plugins\FileTransformation&quot; /y" />
         <Exec Condition="'$(JellyfinVersion)' == '10.10.7'"     Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_10_7\plugins\FileTransformation&quot; /y" />
     </Target>
 
