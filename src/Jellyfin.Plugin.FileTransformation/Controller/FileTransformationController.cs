@@ -4,7 +4,9 @@ using System.Text;
 using Jellyfin.Plugin.FileTransformation.Helpers;
 using Jellyfin.Plugin.FileTransformation.Library;
 using Jellyfin.Plugin.FileTransformation.Models;
+using MediaBrowser.Common.Api;
 using MediaBrowser.Controller;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,6 +27,7 @@ namespace Jellyfin.Plugin.FileTransformation.Controller
         }
         
         [HttpPost("RegisterTransformation")]
+        [Authorize(Policy = Policies.RequiresElevation)]
         public ActionResult RegisterTransformation([FromBody] TransformationRegistrationPayload payload, [FromServices] IWebFileTransformationWriteService writeService)
         {
             writeService.AddTransformation(payload.Id, payload.FileNamePattern, async (path, contents) =>
