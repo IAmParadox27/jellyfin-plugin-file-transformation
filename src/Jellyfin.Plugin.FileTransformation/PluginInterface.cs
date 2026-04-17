@@ -23,10 +23,18 @@ namespace Jellyfin.Plugin.FileTransformation
                 {
                     ILogger logger = FileTransformationPlugin.Instance.ServiceProvider.GetRequiredService<IFileTransformationLogger>();
                     IServerApplicationHost serverApplicationHost = FileTransformationPlugin.Instance.ServiceProvider.GetRequiredService<IServerApplicationHost>();
-                    
+
                     await TransformationHelper.ApplyTransformation(path, contents, castedPayload, logger, serverApplicationHost);
                 });
             }
+        }
+
+        public static void RemoveTransformation(Guid id)
+        {
+            IWebFileTransformationWriteService writeService = FileTransformationPlugin.Instance.ServiceProvider
+                .GetRequiredService<IWebFileTransformationWriteService>();
+
+            writeService.RemoveTransformation(id);
         }
     }
 }

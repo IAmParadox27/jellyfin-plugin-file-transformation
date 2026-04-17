@@ -8,10 +8,19 @@ namespace Jellyfin.Plugin.FileTransformation.Configuration
         Enabled,
     }
     
+    public enum ConfigChangeNotification
+    {
+        Disabled,
+        Toast,
+        AutoReload,
+    }
+
     public class PluginConfiguration : BasePluginConfiguration
     {
         public DebugLoggingState DebugLoggingState { get; set; } = DebugLoggingState.Disabled;
-        
+
+        public ConfigChangeNotification ConfigChangeNotification { get; set; } = ConfigChangeNotification.Toast;
+
         public PluginDefinedTransformation[] Transformations { get; set; } = Array.Empty<PluginDefinedTransformation>();
     }
 
