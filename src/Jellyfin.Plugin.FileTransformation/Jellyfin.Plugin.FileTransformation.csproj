@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <JellyfinVersion>10.11.3</JellyfinVersion>
@@ -16,51 +16,30 @@
         <Description>Jellyfin plugin to allow other plugin developers to intercept and change the delivered web content of jellyfin-web without requiring custom jellyfin-web builds or injected javascript.
 
 This plugin is based on a Pull Request (https://github.com/jellyfin/jellyfin/pull/9095) by https://github.com/JPVenson. Most of the code here was written by him, though adapted to function in a plugin context rather than a native change.</Description>
-        
+
         <Version>2.5.0.0 </Version>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        
-      <PackageReference Include="Jellyfin.Model" Version="$(JellyfinNugetVersion)" />
-      <PackageReference Include="Jellyfin.Controller" Version="$(JellyfinNugetVersion)" />
-      <PackageReference Include="Jellyfin.Data" Version="$(JellyfinNugetVersion)" />
-      <PackageReference Include="Jellyfin.Extensions" Version="$(JellyfinNugetVersion)" />
-
-      <PackageReference Include="Lib.Harmony" Version="2.4.0" GeneratePathProperty="true" />
-
-      <PackageReference Include="prometheus-net" Version="8.2.1" />
-      <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
-      <PackageReference Include="prometheus-net.DotNetRuntime" Version="4.4.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Jellyfin.Model" Version="$(JellyfinNugetVersion)" />
+        <PackageReference Include="Jellyfin.Controller" Version="$(JellyfinNugetVersion)" />
+        <PackageReference Include="Jellyfin.Data" Version="$(JellyfinNugetVersion)" />
+        <PackageReference Include="Jellyfin.Extensions" Version="$(JellyfinNugetVersion)" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="$(PkgLib_Harmony)\lib\net8.0\0Harmony.dll" />
-      <EmbeddedResource Include="Configuration\config.html" />
+        <None Remove="Configuration\config.html" />
+        <EmbeddedResource Include="Configuration\config.html" />
+        <None Remove="Script\auto-refresh.js" />
+        <EmbeddedResource Include="Script\auto-refresh.js" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <None Include="..\..\README.md" />
         <None Include="..\logo.png" CopyToOutputDirectory="Always" />
     </ItemGroup>
-    
-    <!-- 10.10.7 Specific Code from non 10.10.7 builds -->
-    <ItemGroup Condition="'$(JellyfinVersion)' != '10.10.7'">
-        <None Include="JellyfinVersionSpecific/10.10.7/*.cs" />
-        <Compile Remove="JellyfinVersionSpecific/10.10.7/*.cs" />
-    </ItemGroup>
 
-    <!-- Remove 10.11.0 Specific Code from non 10.11.0 builds -->
-    <ItemGroup Condition="'$(JellyfinVersion)' != '10.11.0'">
-        <None Include="JellyfinVersionSpecific/10.11.0/*.cs" />
-        <Compile Remove="JellyfinVersionSpecific/10.11.0/*.cs" />
-    </ItemGroup>
-    <ItemGroup Condition="!$(JellyfinVersion.StartsWith('10.11'))">
-        <None Include="JellyfinVersionSpecific/10.11/*.cs" />
-        <Compile Remove="JellyfinVersionSpecific/10.11/*.cs" />
-    </ItemGroup>
-    
     <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation')">
         <Exec Condition="$(JellyfinVersion.StartsWith('10.11'))" Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_11\plugins\FileTransformation&quot; /y" />
         <Exec Condition="'$(JellyfinVersion)' == '10.10.7'"     Command="xcopy &quot;$(OutDir)$(TargetName).*&quot; &quot;C:\ProgramData\Jellyfin\Server_10_10_7\plugins\FileTransformation&quot; /y" />
