@@ -12,7 +12,8 @@
           "version": "2.5.9.0",
           "changelog": "Bump to Jellyfin 10.11.9.",
           "targetAbi": "10.11.0.0",
-          "sourceUrl": "https://github.com/sim-yujie/jellyfin-plugin-file-transformation/releases/download/v2.5.9.0/Release-10.11.9.zip",
+          "sourceUrl": "https://github.com/sim-yujie/jellyfin-plugin-file-transformation/releases/download/2.5.9.0/Release-10.11.9.zip",
+          
           "checksum": "A676E4E00F7C8D968644A95CD98F2B3A",
           "timestamp": "2026-05-24T00:00:00Z"
         }
