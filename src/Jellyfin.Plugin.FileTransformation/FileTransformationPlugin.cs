@@ -1,4 +1,4 @@
-﻿using Jellyfin.Plugin.FileTransformation.Configuration;
+using Jellyfin.Plugin.FileTransformation.Configuration;
 using Jellyfin.Plugin.FileTransformation.Library;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
@@ -23,6 +23,11 @@ namespace Jellyfin.Plugin.FileTransformation
             Instance = this;
             
             ServiceProvider = serviceProvider;
+
+            // Replay any transformations registered by other plugins before this
+            // constructor ran. On Jellyfin 12.0 consumer IHostedServices can start
+            // before the plugin is constructed. See PluginInterface.s_pending.
+            PluginInterface.DrainPending(serviceProvider);
 
             foreach (PluginDefinedTransformation transformation in Configuration.Transformations)
             {
