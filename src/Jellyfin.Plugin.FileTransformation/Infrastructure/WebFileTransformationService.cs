@@ -9,10 +9,16 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
     {
         private readonly ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>> m_fileTransformations = new ConcurrentDictionary<string, ICollection<(Guid TransformId, TransformFile Delegate)>>();
         private readonly ILogger<FileTransformationPlugin> m_logger;
+        private readonly DateTimeOffset m_startedAt = DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
         public WebFileTransformationService(IFileTransformationLogger logger)
         {
             m_logger = logger;
+        }
+
+        public DateTimeOffset GetLastModified(DateTimeOffset? baseLastModified)
+        {
+            return baseLastModified > m_startedAt ? baseLastModified.Value : m_startedAt;
         }
         
         private string NormalizePath(string path)
