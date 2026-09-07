@@ -7,12 +7,14 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
     {
         private readonly PhysicalFileInfo? m_baseInfo;
         private readonly Stream m_transformedStream;
+        private readonly DateTimeOffset m_lastModified;
         private readonly string? m_nameOverride;
 
-        public TransformableFileInfo(PhysicalFileInfo? baseInfo, Stream transformedStream, string? nameOverride = null)
+        public TransformableFileInfo(PhysicalFileInfo? baseInfo, Stream transformedStream, DateTimeOffset lastModified, string? nameOverride = null)
         {
             m_baseInfo = baseInfo;
             m_transformedStream = transformedStream;
+            m_lastModified = lastModified;
             m_nameOverride = nameOverride;
         }
 
@@ -20,7 +22,7 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
         public bool IsDirectory => m_baseInfo?.IsDirectory ?? false;
 
-        public DateTimeOffset LastModified => m_baseInfo?.LastModified ?? DateTimeOffset.Now;
+        public DateTimeOffset LastModified => m_lastModified;
 
         public long Length => m_transformedStream.Length;
 

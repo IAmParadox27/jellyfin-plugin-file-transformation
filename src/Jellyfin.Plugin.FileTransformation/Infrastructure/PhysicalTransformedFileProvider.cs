@@ -53,7 +53,11 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 m_webFileTransformationService.RunTransformation(subpath, transformedStream).GetAwaiter().GetResult();
                 transformedStream.Seek(0, SeekOrigin.Begin);
 
-                return new TransformableFileInfo(physicalFileInfo.Exists ? physicalFileInfo : null, transformedStream, physicalFileInfo.Exists ? null : subpath);
+                return new TransformableFileInfo(
+                    physicalFileInfo.Exists ? physicalFileInfo : null,
+                    transformedStream,
+                    m_webFileTransformationService.GetLastModified(physicalFileInfo.Exists ? physicalFileInfo.LastModified : null),
+                    physicalFileInfo.Exists ? null : subpath);
             }
             
             return iFileInfo;

@@ -9,10 +9,7 @@ namespace Jellyfin.Plugin.FileTransformation.JellyfinVersionSpecific
         {
             options.OnPrepareResponse = (context) =>
             {
-                if (Path.GetFileName(context.File.Name).Equals("index.html", StringComparison.Ordinal))
-                {
-                    context.Context.Response.Headers.CacheControl = new StringValues("no-cache");
-                }
+                context.Context.Response.Headers.CacheControl = new StringValues("no-cache");
             };
             
             return options;
