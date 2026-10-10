@@ -1,0 +1,43 @@
+name: Compatibility Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - v12
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Jellyfin ${{ matrix.jellyfin-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - jellyfin-version: 10.11.11
+            dotnet-version: 9.0.x
+          - jellyfin-version: 12.0.0
+            dotnet-version: 10.0.x
+          - jellyfin-version: 12.2.0
+            dotnet-version: 10.0.x
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Build plugin
+        run: >-
+          dotnet publish
+          src/Jellyfin.Plugin.FileTransformation/Jellyfin.Plugin.FileTransformation.csproj
+          --configuration Release
+          -p:JellyfinVersion=${{ matrix.jellyfin-version }}
