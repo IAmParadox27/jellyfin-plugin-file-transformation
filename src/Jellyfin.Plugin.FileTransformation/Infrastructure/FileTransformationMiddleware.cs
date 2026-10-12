@@ -60,6 +60,13 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             // Strip Accept-Encoding so Jellyfin serves uncompressed content into our buffer.
             context.Request.Headers.Remove("Accept-Encoding");
 
+            // Take the client's cache validators too and check them against the transformed ETag below.
+            // Left in place, Jellyfin compares them with the untransformed file and answers 304, so a
+            // browser that cached the page before a transform was registered never receives it.
+            string ifNoneMatch = context.Request.Headers.IfNoneMatch.ToString();
+            context.Request.Headers.Remove(HeaderNames.IfNoneMatch);
+            context.Request.Headers.Remove(HeaderNames.IfModifiedSince);
+
             // Buffer the response body so we can run transformations on it
             Stream originalBody = context.Response.Body;
             using MemoryStream bufferedBody = new MemoryStream();
@@ -134,7 +141,6 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 string etag = $"\"{BitConverter.ToString(hashBytes, 0, 8).Replace("-", string.Empty).ToLowerInvariant()}\"";
 
                 // Check If-None-Match — return 304 if content hasn't changed
-                string ifNoneMatch = context.Request.Headers.IfNoneMatch.ToString();
                 if (!string.IsNullOrEmpty(ifNoneMatch) && string.Equals(ifNoneMatch, etag, StringComparison.Ordinal))
                 {
                     context.Response.StatusCode = 304;
