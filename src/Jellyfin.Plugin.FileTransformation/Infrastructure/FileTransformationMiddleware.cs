@@ -52,6 +52,13 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 return;
             }
 
+            bool isHead = HttpMethods.IsHead(context.Request.Method);
+            if (!isHead && !HttpMethods.IsGet(context.Request.Method))
+            {
+                await m_next(context);
+                return;
+            }
+
             logger.LogDebug($"[FileTransformation] Intercepting response for: {relativePath}");
 
             // Save the client's Accept-Encoding before stripping — we'll re-compress after transforming.
@@ -60,6 +67,11 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
             // Strip Accept-Encoding so Jellyfin serves uncompressed content into our buffer.
             context.Request.Headers.Remove("Accept-Encoding");
 
+            // Byte ranges describe the original file, not the transformed representation.
+            // Ignore them for this response and return the complete transformed file.
+            context.Request.Headers.Remove(HeaderNames.Range);
+            context.Request.Headers.Remove(HeaderNames.IfRange);
+
             // Buffer the response body so we can run transformations on it
             Stream originalBody = context.Response.Body;
             using MemoryStream bufferedBody = new MemoryStream();
@@ -67,7 +79,22 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
 
             try
             {
-                await m_next(context);
+                // HEAD needs the same representation headers as GET. Ask downstream for
+                // the complete body, transform it normally, then suppress the final write.
+                string originalMethod = context.Request.Method;
+                try
+                {
+                    if (isHead)
+                    {
+                        context.Request.Method = HttpMethods.Get;
+                    }
+
+                    await m_next(context);
+                }
+                finally
+                {
+                    context.Request.Method = originalMethod;
+                }
 
                 // Virtual file synthesis: if a transform is registered for a file that
                 // doesn't exist on disk (404), create an empty response and let the
@@ -96,7 +123,10 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                     // Non-200 response with no transform registered — pass through
                     bufferedBody.Seek(0, SeekOrigin.Begin);
                     context.Response.Body = originalBody;
-                    await bufferedBody.CopyToAsync(context.Response.Body);
+                    if (!isHead)
+                    {
+                        await bufferedBody.CopyToAsync(context.Response.Body);
+                    }
                     return;
                 }
 
@@ -148,6 +178,8 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 // Prepare the response headers
                 context.Response.Headers.Remove("Content-Encoding");
                 context.Response.Headers.Remove("Last-Modified");
+                context.Response.Headers.Remove(HeaderNames.AcceptRanges);
+                context.Response.Headers.Remove(HeaderNames.ContentRange);
                 context.Response.Headers[HeaderNames.ETag] = etag;
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
                 context.Response.Headers[HeaderNames.Vary] = "Accept-Encoding";
@@ -211,7 +243,10 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                         // Set before the write to originalBody — once the response starts flushing to
                         // the client we cannot fall back to uncompressed without sending garbled bytes.
                         compressed = true;
-                        await compressedBuffer.CopyToAsync(originalBody);
+                        if (!isHead)
+                        {
+                            await compressedBuffer.CopyToAsync(originalBody);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -222,7 +257,10 @@ namespace Jellyfin.Plugin.FileTransformation.Infrastructure
                 if (!compressed)
                 {
                     context.Response.ContentLength = bufferedBody.Length;
-                    await bufferedBody.CopyToAsync(originalBody);
+                    if (!isHead)
+                    {
+                        await bufferedBody.CopyToAsync(originalBody);
+                    }
                 }
             }
             catch
